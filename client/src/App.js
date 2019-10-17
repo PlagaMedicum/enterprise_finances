@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Alert from 'react-bootstrap/Alert';
-import uButton from './uButton';
+import RequestButton from './uButton';
 
 class App extends Component {
   render() {
@@ -17,11 +17,7 @@ class App extends Component {
             Did you see my coffeecup?
           </p>
         </Alert>
-        <br/>
-        <uButton/>
-        <p>
-            SASSAASSASASASASASASAS
-        </p>
+        <RequestButton />
       </div>
     );
   }

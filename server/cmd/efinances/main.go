@@ -13,6 +13,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		log.Info("GET / requested")
 		w.WriteHeader(http.StatusOK)
 	}).Methods("GET")
