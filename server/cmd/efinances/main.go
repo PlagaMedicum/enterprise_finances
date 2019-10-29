@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/handlers"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 	"net/http"
@@ -12,11 +13,7 @@ func main() {
 	log.Info("Programmee started")
 
 	r := mux.NewRouter()
-	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		log.Info("GET / requested")
-		w.WriteHeader(http.StatusOK)
-	}).Methods("GET")
+	r.HandleFunc("/employee/add", handlers.AddEmployee).Methods(http.MethodPost)
 
 	http.Handle("/", r)
 	s := http.Server{
