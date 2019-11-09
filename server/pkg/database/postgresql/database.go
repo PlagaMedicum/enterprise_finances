@@ -19,7 +19,7 @@ type DB struct {
 }
 
 func (db DB) Connect() {
-	log.Info("Connectiong to PostgreSQL DB.")
+	log.Info("Connecting to PostgreSQL DB.")
 
 	var err error
 	db.sqldb, err = sql.Open("pgx",
@@ -41,4 +41,6 @@ func (db DB) Connect() {
 	if err != nil {
 		log.Error(err)
 	}
+
+	log.Info("PostgreSQL DB connected!")
 }

@@ -10,12 +10,15 @@ import (
 	"net/http"
 )
 
-const addr string = ":1540"
-
 func main() {
-	log.Info("Programmee started")
-
-	db = psql.DB
+	db := psql.DB{
+		User:     "postgres",
+		Password: "postgres",
+		Host:     "localhost",
+		Port:     5432,
+		Database: "efinances",
+	}
+	db.Connect()
 
 	h := handlers.Controller{
 		usecases.Controller{
@@ -31,7 +34,7 @@ func main() {
 
 	http.Handle("/", r)
 	s := http.Server{
-		Addr:    addr,
+		Addr:    ":1540",
 		Handler: r,
 	}
 
