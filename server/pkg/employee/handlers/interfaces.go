@@ -11,4 +11,5 @@ type Usecases interface {
 	EditEmployee(ctx context.Context, id big.Int) error
 	DeleteEmployee(ctx context.Context, id big.Int) error
 	GetEmployeeList(ctx context.Context) ([]employee.Employee, error)
+	GetEmployee(ctx context.Context, id big.Int) (employee.Employee, error)
 }

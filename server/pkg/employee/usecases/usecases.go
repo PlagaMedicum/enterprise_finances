@@ -25,3 +25,7 @@ func (c Controller) DeleteEmployee(ctx context.Context, id big.Int) error {
 func (c Controller) GetEmployeeList(ctx context.Context) ([]employee.Employee, error) {
 	return nil, nil
 }
+
+func (c Controller) GetEmployee(ctx context.Context, id big.Int) (employee.Employee, error) {
+	return employee.Employee{}, nil
+}
