@@ -1,11 +1,11 @@
 package postgresql
 
 import (
-	psql "github.com/PlagaMedicum/enterprise_finances/server/pkg/database/postgresql"
+	"github.com/PlagaMedicum/enterprise_finances/server/pkg/database/postgresql"
 )
 
 type Controller struct {
-	psql.DB
+	postgresql.DB
 }
 
 func (c Controller) AddEmployee() error {

@@ -1,10 +1,11 @@
 package domain
 
+import "math/big"
+
 type Employee struct {
-	ID                 uint64 `json:"id"`
-	Name               string `json:"name"`
-	Salary             uint64 `json:"salary"`
-	Position           string `json:"position"`
-	Grade              int    `json:"grade"`
-	IsTradeUnionMember bool   `json:"is-trade-union-member"`
+	ID                 big.Int `json:"id"`
+	Name               string  `json:"name"`
+	Position           string  `json:"position"`
+	Grade              big.Int `json:"grade"`
+	IsTradeUnionMember bool    `json:"is-trade-union-member"`
 }

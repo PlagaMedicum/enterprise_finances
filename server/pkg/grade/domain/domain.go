@@ -1,6 +1,9 @@
 package domain
 
+import "math/big"
+
 type Grade struct {
-	ID          uint64 `json:"id"`
-	Coefficient map[string]uint64
+	ID          big.Int `json:"id"`
+	Date        string  `json:"date"`
+	Coefficient int     `json:"coefficient"`
 }

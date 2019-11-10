@@ -8,18 +8,18 @@ type Controller struct {
 	postgresql.DB
 }
 
-func (c Controller) AddEmployee() error {
-
+func (c Controller) AddInfo() error {
+	return nil
 }
 
-func (c Controller) UpdateEmployee() error {
-
+func (c Controller) UpdateInfo() error {
+	return nil
 }
 
-func (c Controller) DeleteEmployee() error {
-
+func (c Controller) DeleteInfo() error {
+	return nil
 }
 
-func (c Controller) GetEmployeeList() error {
-
+func (c Controller) GetGradeList() error {
+	return nil
 }
