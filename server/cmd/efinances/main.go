@@ -2,9 +2,12 @@ package main
 
 import (
 	psql "github.com/PlagaMedicum/enterprise_finances/server/pkg/database/postgresql"
-	"github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/handlers"
-	repo "github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/repositories/postgresql"
-	"github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/usecases"
+	ehandlers "github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/handlers"
+	erepo "github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/repositories/postgresql"
+	eusecases "github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/usecases"
+	ghandlers "github.com/PlagaMedicum/enterprise_finances/server/pkg/grade/handlers"
+	grepo "github.com/PlagaMedicum/enterprise_finances/server/pkg/grade/repositories/postgresql"
+	gusecases "github.com/PlagaMedicum/enterprise_finances/server/pkg/grade/usecases"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 	"net/http"
@@ -20,17 +23,31 @@ func main() {
 	}
 	db.Connect()
 
-	h := handlers.Controller{
-		usecases.Controller{
-			repo.Controller{
+	eh := ehandlers.Controller{
+		eusecases.Controller{
+			erepo.Controller{
+				db,
+			},
+		},
+	}
+	gh := ghandlers.Controller{
+		gusecases.Controller{
+			grepo.Controller{
 				db,
 			},
 		},
 	}
 
 	r := mux.NewRouter()
-	r.HandleFunc("/employee/add", h.AddEmployee).Methods(http.MethodPost)
-	r.HandleFunc("/employee/add", h.AddEmployee).Methods(http.MethodPost)
+	r.HandleFunc("/employee/add", eh.AddEmployee).Methods(http.MethodPost)
+	r.HandleFunc("/employee/{id}", eh.EditEmployee).Methods(http.MethodPost)
+	r.HandleFunc("/employee/{id}", eh.EditEmployee).Methods(http.MethodDelete)
+	r.HandleFunc("/employee", eh.EditEmployee).Methods(http.MethodGet)
+	r.HandleFunc("/employee/{id}", eh.EditEmployee).Methods(http.MethodGet)
+	r.HandleFunc("/grade", gh.AddInfo).Methods(http.MethodPost)
+	r.HandleFunc("/grade/{id}", gh.EditInfo).Methods(http.MethodPost)
+	r.HandleFunc("/grade/{id}", gh.DeleteInfo).Methods(http.MethodDelete)
+	r.HandleFunc("/grade", gh.GetGradeList).Methods(http.MethodGet)
 
 	http.Handle("/", r)
 	s := http.Server{

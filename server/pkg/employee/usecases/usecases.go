@@ -5,17 +5,17 @@ type Controller struct {
 }
 
 func (c Controller) AddEmployee() error {
-
+	return nil
 }
 
 func (c Controller) EditEmployee() error {
-
+	return nil
 }
 
 func (c Controller) DeleteEmployee() error {
-
+	return nil
 }
 
 func (c Controller) GetEmployeeList() error {
-
+	return nil
 }

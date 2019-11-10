@@ -1,9 +1,16 @@
 create table if not exists employee
 (
-    id     serial
+    id                serial
         constraint employee_pk primary key,
-    name   text   not null,
-    salary serial not null
+    name              text    not null,
+    position          text    not null,
+    is_in_trade_union boolean not null
+);
+
+create table if not exists minimal_salary
+(
+    date  text   not null,
+    value serial not null
 );
 
 create table if not exists grade

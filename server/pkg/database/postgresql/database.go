@@ -68,6 +68,10 @@ func (db *DB) createMigration() {
 }
 
 func (db *DB) MigrateUp() {
+	if db.m == nil {
+		db.createMigration()
+	}
+
 	err := db.m.Up()
 	if err != nil && err != migrate.ErrNoChange {
 		log.Error(err)
@@ -75,6 +79,10 @@ func (db *DB) MigrateUp() {
 }
 
 func (db *DB) MigrateDown() {
+	if db.m == nil {
+		db.createMigration()
+	}
+
 	err := db.m.Down()
 	if err != nil && err != migrate.ErrNoChange {
 		log.Error(err)

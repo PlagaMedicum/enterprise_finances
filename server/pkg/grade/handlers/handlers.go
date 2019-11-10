@@ -5,30 +5,34 @@ import (
 	"net/http"
 )
 
-func AddInfo(w http.ResponseWriter, r *http.Request) {
+type Controller struct {
+	Usecases
+}
+
+func (c Controller) AddInfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	log.Info("POST /grade/add requested")
+	log.Info(r.Method + r.URL.Path)
 	w.WriteHeader(http.StatusOK)
 }
 
-func EditInfo(w http.ResponseWriter, r *http.Request) {
+func (c Controller) EditInfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	log.Info("POST /grade/{id} requested")
+	log.Info(r.Method + r.URL.Path)
 	w.WriteHeader(http.StatusOK)
 }
 
-func DeleteInfo(w http.ResponseWriter, r *http.Request) {
+func (c Controller) DeleteInfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	log.Info("DELETE /grade/{id} requested")
+	log.Info(r.Method + r.URL.Path)
 	w.WriteHeader(http.StatusOK)
 }
 
-func GetGradeList(w http.ResponseWriter, r *http.Request) {
+func (c Controller) GetGradeList(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	log.Info("GET /grade requested")
+	log.Info(r.Method + r.URL.Path)
 	w.WriteHeader(http.StatusOK)
 }
