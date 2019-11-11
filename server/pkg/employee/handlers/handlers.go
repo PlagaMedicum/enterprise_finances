@@ -50,10 +50,10 @@ func (c Controller) AddEmployee(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w, http.StatusInternalServerError)
 		return
 	}
-	type resp struct {
+	resp := struct {
 		ID big.Int `json:"id"`
-	}
-	err = json.NewEncoder(w).Encode(resp{ID: e.ID})
+	}{ID: e.ID}
+	err = json.NewEncoder(w).Encode(resp)
 	if err != nil {
 		handleError(err, w, http.StatusInternalServerError)
 		return
