@@ -10,22 +10,27 @@ type Controller struct {
 	Repository
 }
 
-func (c Controller) AddEmployee(ctx context.Context) (big.Int, error) {
-	return big.Int{}, nil
+func (c Controller) AddEmployee(ctx context.Context, e employee.Employee) (big.Int, error) {
+	id, err := c.Repository.AddEmployee(ctx, e)
+	return id, err
 }
 
-func (c Controller) EditEmployee(ctx context.Context, id big.Int) error {
-	return nil
+func (c Controller) EditEmployee(ctx context.Context, e employee.Employee) error {
+	err := c.Repository.UpdateEmployee(ctx, e)
+	return err
 }
 
 func (c Controller) DeleteEmployee(ctx context.Context, id big.Int) error {
-	return nil
+	err := c.Repository.DeleteEmployee(ctx, id)
+	return err
 }
 
 func (c Controller) GetEmployeeList(ctx context.Context) ([]employee.Employee, error) {
-	return nil, nil
+	elist, err := c.Repository.GetEmployeeList(ctx)
+	return elist, err
 }
 
 func (c Controller) GetEmployee(ctx context.Context, id big.Int) (employee.Employee, error) {
-	return employee.Employee{}, nil
+	e, err := c.Repository.GetEmployee(ctx, id)
+	return e, err
 }

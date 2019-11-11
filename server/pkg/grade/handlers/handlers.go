@@ -66,12 +66,18 @@ func (c Controller) EditInfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	id, err := parseID(r)
+	g := grade.Grade{}
+	err := json.NewDecoder(r.Body).Decode(&g)
+	if err != nil {
+		handleError(err, w, http.StatusInternalServerError)
+		return
+	}
+	g.ID, err = parseID(r)
 	if err != nil {
 		handleError(err, w, http.StatusBadRequest)
 		return
 	}
-	err = c.Usecases.EditInfo(r.Context(), id)
+	err = c.Usecases.EditInfo(r.Context(), g)
 	if err != nil {
 		handleError(err, w, http.StatusInternalServerError)
 		return

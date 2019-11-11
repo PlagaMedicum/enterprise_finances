@@ -66,12 +66,18 @@ func (c Controller) EditEmployee(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	id, err := parseID(r)
+	var e employee.Employee
+	err := json.NewDecoder(r.Body).Decode(&e)
 	if err != nil {
 		handleError(err, w, http.StatusBadRequest)
 		return
 	}
-	err = c.Usecases.EditEmployee(r.Context(), id)
+	e.ID, err = parseID(r)
+	if err != nil {
+		handleError(err, w, http.StatusBadRequest)
+		return
+	}
+	err = c.Usecases.EditEmployee(r.Context(), e)
 	if err != nil {
 		handleError(err, w, http.StatusInternalServerError)
 		return
