@@ -1,14 +1,12 @@
 package postgresql
 
 import (
-	"database/sql"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres" // needed for postgresql db migrations.
 	_ "github.com/golang-migrate/migrate/v4/source/file"       // needed for postgresql db migrations.
-	"github.com/jackc/pgx"
-	"github.com/jackc/pgx/stdlib"
-	_ "github.com/lib/pq" // needed for postgresql db migrations.
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq" // needed for postgresql connection.
 	log "github.com/sirupsen/logrus"
 	"strconv"
 )
@@ -24,16 +22,14 @@ type DB struct {
 	Port     uint64
 	Database string
 	SSLMode  string
-	sqldb    *sql.DB
-	Conn     *pgx.Conn
+	DB       *sqlx.DB
 	m        *migrate.Migrate
 }
 
 func (db *DB) Connect() {
 	log.Info("Connecting to PostgreSQL DB.")
 
-	var err error
-	db.sqldb, err = sql.Open("pgx",
+	sqlxdb, err := sqlx.Connect("postgres",
 		"user="+db.User+" "+
 			"password="+db.Password+" "+
 			"host="+db.Host+" "+
@@ -45,23 +41,20 @@ func (db *DB) Connect() {
 		return
 	}
 
-	err = db.sqldb.Ping()
+	err = sqlxdb.Ping()
 	if err != nil {
 		log.Error(err)
 		return
 	}
 
-	db.Conn, err = stdlib.AcquireConn(db.sqldb)
-	if err != nil {
-		log.Error(err)
-		return
-	}
+	db.DB = sqlxdb
+	sqlxdb.BeginTx()
 
 	log.Info("PostgreSQL DB connected!")
 }
 
 func (db *DB) createMigration() {
-	driver, err := postgres.WithInstance(db.sqldb, &postgres.Config{DatabaseName: db.Database})
+	driver, err := postgres.WithInstance(db.DB.DB, &postgres.Config{DatabaseName: db.Database})
 	if err != nil {
 		log.Error(err)
 		return
