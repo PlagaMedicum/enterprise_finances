@@ -23,8 +23,9 @@ type DB struct {
 	Host     string
 	Port     uint64
 	Database string
+	SSLMode  string
 	sqldb    *sql.DB
-	conn     *pgx.Conn
+	Conn     *pgx.Conn
 	m        *migrate.Migrate
 }
 
@@ -37,19 +38,23 @@ func (db *DB) Connect() {
 			"password="+db.Password+" "+
 			"host="+db.Host+" "+
 			"port="+strconv.FormatUint(db.Port, 10)+" "+
-			"database="+db.Database)
+			"database="+db.Database+" "+
+			"sslmode="+db.SSLMode)
 	if err != nil {
 		log.Error(err)
+		return
 	}
 
 	err = db.sqldb.Ping()
 	if err != nil {
 		log.Error(err)
+		return
 	}
 
-	db.conn, err = stdlib.AcquireConn(db.sqldb)
+	db.Conn, err = stdlib.AcquireConn(db.sqldb)
 	if err != nil {
 		log.Error(err)
+		return
 	}
 
 	log.Info("PostgreSQL DB connected!")
@@ -59,11 +64,13 @@ func (db *DB) createMigration() {
 	driver, err := postgres.WithInstance(db.sqldb, &postgres.Config{DatabaseName: db.Database})
 	if err != nil {
 		log.Error(err)
+		return
 	}
 
 	db.m, err = migrate.NewWithDatabaseInstance(migrationPath, db.Database, driver)
 	if err != nil {
 		log.Error(err)
+		return
 	}
 }
 

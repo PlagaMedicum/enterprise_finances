@@ -25,7 +25,8 @@ func handleError(err error, w http.ResponseWriter, status int) {
 }
 
 func parseID(r *http.Request) (big.Int, error) {
-	id, ok := big.Int{}.SetString(mux.Vars(r)["id"], 10)
+	bi := big.Int{}
+	id, ok := bi.SetString(mux.Vars(r)["id"], 10)
 	if !ok {
 		err := errors.Errorf("Error parsing id to big.Int.")
 		return big.Int{}, err

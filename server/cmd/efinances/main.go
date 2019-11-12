@@ -20,20 +20,23 @@ func main() {
 		Host:     "localhost",
 		Port:     5432,
 		Database: "efinances",
+		SSLMode:  "disable",
 	}
 	db.Connect()
+	db.MigrateDown()
+	db.MigrateUp()
 
 	eh := ehandlers.Controller{
-		eusecases.Controller{
-			erepo.Controller{
-				db,
+		Usecases: eusecases.Controller{
+			Repository: erepo.Controller{
+				DB: db,
 			},
 		},
 	}
 	gh := ghandlers.Controller{
-		gusecases.Controller{
-			grepo.Controller{
-				db,
+		Usecases: gusecases.Controller{
+			Repository: grepo.Controller{
+				DB: db,
 			},
 		},
 	}
