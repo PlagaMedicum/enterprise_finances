@@ -1,4 +1,4 @@
-create table if not exists employee
+create table if not exists employees
 (
     id            serial
         constraint employee_pk primary key,
@@ -14,13 +14,13 @@ create table if not exists employees_grades
     g_id serial not null
 );
 
-create table if not exists minimal_salary
+create table if not exists minimal_salaries
 (
     date  text   not null,
     value serial not null
 );
 
-create table if not exists grade
+create table if not exists grades
 (
     id    serial
         constraint grade_pk primary key,

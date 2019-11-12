@@ -1,2 +1,4 @@
-drop table if exists employee;
-drop table if exists grade;
+drop table if exists employees;
+drop table if exists grades;
+drop table if exists employees_grades;
+drop table if exists minimal_salaries;
