@@ -15,12 +15,12 @@ import (
 
 func main() {
 	db := psql.DB{
-		User:     "postgres",
-		Password: "postgres",
-		Host:     "localhost",
-		Port:     5432,
-		Database: "efinances",
-		SSLMode:  "disable",
+		User:         "postgres",
+		Password:     "postgres",
+		Host:         "localhost",
+		Port:         5432,
+		DatabaseName: "efinances",
+		SSLMode:      "disable",
 	}
 	db.Connect()
 	db.MigrateDown()

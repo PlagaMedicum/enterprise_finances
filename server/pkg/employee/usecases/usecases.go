@@ -3,34 +3,38 @@ package usecases
 import (
 	"context"
 	employee "github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/domain"
-	"math/big"
 )
 
 type Controller struct {
 	Repository
 }
 
-func (c Controller) AddEmployee(ctx context.Context, e employee.Employee) (big.Int, error) {
+// AddEmployee ...
+func (c Controller) AddEmployee(ctx context.Context, e employee.Employee) (uint64, error) {
 	id, err := c.Repository.AddEmployee(ctx, e)
 	return id, err
 }
 
+// EditEmployee ...
 func (c Controller) EditEmployee(ctx context.Context, e employee.Employee) error {
 	err := c.Repository.UpdateEmployee(ctx, e)
 	return err
 }
 
-func (c Controller) DeleteEmployee(ctx context.Context, id big.Int) error {
+// DeleteEmployee ...
+func (c Controller) DeleteEmployee(ctx context.Context, id uint64) error {
 	err := c.Repository.DeleteEmployee(ctx, id)
 	return err
 }
 
+// GetEmployeeList ...
 func (c Controller) GetEmployeeList(ctx context.Context) ([]employee.Employee, error) {
 	elist, err := c.Repository.GetEmployeeList(ctx)
 	return elist, err
 }
 
-func (c Controller) GetEmployee(ctx context.Context, id big.Int) (employee.Employee, error) {
+// GetEmployee ...
+func (c Controller) GetEmployee(ctx context.Context, id uint64) (employee.Employee, error) {
 	e, err := c.Repository.GetEmployee(ctx, id)
 	return e, err
 }

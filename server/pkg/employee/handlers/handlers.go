@@ -4,10 +4,9 @@ import (
 	"encoding/json"
 	employee "github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/domain"
 	"github.com/gorilla/mux"
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
-	"math/big"
 	"net/http"
+	"strconv"
 )
 
 type Controller struct {
@@ -24,16 +23,12 @@ func handleError(err error, w http.ResponseWriter, status int) {
 	}
 }
 
-func parseID(r *http.Request) (big.Int, error) {
-	bi := big.Int{}
-	id, ok := bi.SetString(mux.Vars(r)["id"], 10)
-	if !ok {
-		err := errors.Errorf("Error parsing id to big.Int.")
-		return big.Int{}, err
-	}
-	return *id, nil
+func parseID(r *http.Request) (uint64, error) {
+	id, err := strconv.ParseUint(mux.Vars(r)["id"], 10, 64)
+	return id, err
 }
 
+// AddEmployee ...
 func (c Controller) AddEmployee(w http.ResponseWriter, r *http.Request) {
 	log.Info(r.Method + r.URL.Path)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -52,7 +47,7 @@ func (c Controller) AddEmployee(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	resp := struct {
-		ID big.Int `json:"id"`
+		ID uint64 `json:"id"`
 	}{ID: e.ID}
 	err = json.NewEncoder(w).Encode(resp)
 	if err != nil {
@@ -61,6 +56,7 @@ func (c Controller) AddEmployee(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// EditEmployee ...
 func (c Controller) EditEmployee(w http.ResponseWriter, r *http.Request) {
 	log.Info(r.Method + r.URL.Path)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -85,6 +81,7 @@ func (c Controller) EditEmployee(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// DeleteEmployee ...
 func (c Controller) DeleteEmployee(w http.ResponseWriter, r *http.Request) {
 	log.Info(r.Method + r.URL.Path)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -103,6 +100,7 @@ func (c Controller) DeleteEmployee(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// GetEmployeeList ...
 func (c Controller) GetEmployeeList(w http.ResponseWriter, r *http.Request) {
 	log.Info(r.Method + r.URL.Path)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -121,6 +119,7 @@ func (c Controller) GetEmployeeList(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// GetEmployeePayments ...
 func (c Controller) GetEmployeePayments(w http.ResponseWriter, r *http.Request) {
 	log.Info(r.Method + r.URL.Path)
 	w.Header().Set("Access-Control-Allow-Origin", "*")

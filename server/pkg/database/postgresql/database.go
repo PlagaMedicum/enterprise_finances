@@ -1,6 +1,7 @@
 package postgresql
 
 import (
+	"fmt"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres" // needed for postgresql db migrations.
@@ -8,65 +9,54 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq" // needed for postgresql connection.
 	log "github.com/sirupsen/logrus"
-	"strconv"
 )
 
 const (
-	migrationPath = "file://db/postgresql/migrations"
+	migrationPath = "file://server/db/postgresql/migrations"
 )
 
 type DB struct {
-	User     string
-	Password string
-	Host     string
-	Port     uint64
-	Database string
-	SSLMode  string
-	DB       *sqlx.DB
-	m        *migrate.Migrate
+	User         string
+	Password     string
+	Host         string
+	Port         uint64
+	DatabaseName string
+	SSLMode      string
+	DB           *sqlx.DB
+	m            *migrate.Migrate
 }
 
+// Connect ...
 func (db *DB) Connect() {
 	log.Info("Connecting to PostgreSQL DB.")
 
-	sqlxdb, err := sqlx.Connect("postgres",
-		"user="+db.User+" "+
-			"password="+db.Password+" "+
-			"host="+db.Host+" "+
-			"port="+strconv.FormatUint(db.Port, 10)+" "+
-			"database="+db.Database+" "+
-			"sslmode="+db.SSLMode)
+	var err error
+	db.DB, err = sqlx.Connect("postgres",
+		fmt.Sprintf("user=%s password=%s host=%s port=%d database=%s sslmode=%s",
+			db.User, db.Password, db.Host, db.Port, db.DatabaseName, db.SSLMode))
 	if err != nil {
 		log.Error(err)
 		return
 	}
-
-	err = sqlxdb.Ping()
-	if err != nil {
-		log.Error(err)
-		return
-	}
-
-	db.DB = sqlxdb
-	sqlxdb.BeginTx()
 
 	log.Info("PostgreSQL DB connected!")
 }
 
 func (db *DB) createMigration() {
-	driver, err := postgres.WithInstance(db.DB.DB, &postgres.Config{DatabaseName: db.Database})
+	driver, err := postgres.WithInstance(db.DB.DB, &postgres.Config{DatabaseName: db.DatabaseName})
 	if err != nil {
 		log.Error(err)
 		return
 	}
 
-	db.m, err = migrate.NewWithDatabaseInstance(migrationPath, db.Database, driver)
+	db.m, err = migrate.NewWithDatabaseInstance(migrationPath, db.DatabaseName, driver)
 	if err != nil {
 		log.Error(err)
 		return
 	}
 }
 
+// MigrateUp ...
 func (db *DB) MigrateUp() {
 	if db.m == nil {
 		db.createMigration()
@@ -78,6 +68,7 @@ func (db *DB) MigrateUp() {
 	}
 }
 
+// MigrateDown ...
 func (db *DB) MigrateDown() {
 	if db.m == nil {
 		db.createMigration()

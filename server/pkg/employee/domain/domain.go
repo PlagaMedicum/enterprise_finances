@@ -1,11 +1,9 @@
 package domain
 
-import "math/big"
-
 type Employee struct {
-	ID           big.Int
+	ID           uint64
 	Name         string
 	Position     string
-	Grade        big.Int
-	TUMembership bool `json:"is-trade-union-member" db:"tu_membership"` // true if employee is trade union member
+	Grade        uint64
+	TUMembership bool `json:"tu-membership" db:"tu_membership"` // true if employee is trade union member
 }

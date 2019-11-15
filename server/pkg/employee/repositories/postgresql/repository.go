@@ -4,53 +4,55 @@ import (
 	"context"
 	"github.com/PlagaMedicum/enterprise_finances/server/pkg/database/postgresql"
 	employee "github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/domain"
-	"math/big"
+	"github.com/pkg/errors"
 )
 
 type Controller struct {
 	postgresql.DB
 }
 
-func (c Controller) AddEmployee(ctx context.Context, e employee.Employee) (big.Int, error) {
-	tx, err := c.DB.DB.BeginTx(ctx, nil)
+// AddEmployee ...
+func (c Controller) AddEmployee(ctx context.Context, e employee.Employee) (uint64, error) {
+	tx, err := c.DB.DB.BeginTxx(ctx, nil)
 	if err != nil {
-		return big.Int{}, err
+		return 0, err
 	}
 
-	err = tx.QueryRowContext(ctx,
-		`insert into employees (name, position, tu_membership) values (:name, :position, :tu_membership) returning id;`,
-		e).Scan(&e.ID)
+	err = tx.QueryRowxContext(ctx,
+		`insert into employees (name, position, tu_membership) values ($1, $2, $3) returning id;`,
+		e.Name, e.Position, e.TUMembership).Scan(&e.ID)
 	if err != nil {
-		return big.Int{}, err
+		return 0, errors.Errorf("Query row error. \"insert into employees...\": %s", err)
 	}
-	_, err = tx.ExecContext(ctx,
+	_, err = tx.NamedExecContext(ctx,
 		`insert into employees_grades (e_id, g_id) values (:id, :grade)`,
 		e)
 	if err != nil {
-		return big.Int{}, err
+		return 0, errors.Errorf("Exec error. \"insert into employees_grades...\": %s", err)
 	}
 
 	err = tx.Commit()
 	if err != nil {
-		return big.Int{}, err
+		return 0, err
 	}
 
 	return e.ID, nil
 }
 
+// UpdateEmployee ...
 func (c Controller) UpdateEmployee(ctx context.Context, e employee.Employee) error {
-	tx, err := c.DB.DB.BeginTx(ctx, nil)
+	tx, err := c.DB.DB.BeginTxx(ctx, nil)
 	if err != nil {
 		return err
 	}
 
-	_, err = tx.ExecContext(ctx,
+	_, err = tx.NamedExecContext(ctx,
 		`update employees set name = :name, position = :position, tu_membership = :tu_membership where id = :id;`,
 		e)
 	if err != nil {
 		return err
 	}
-	_, err = tx.ExecContext(ctx,
+	_, err = tx.NamedExecContext(ctx,
 		`update employees_grades set g_id = :grade where e_id = :id`,
 		e)
 	if err != nil {
@@ -60,8 +62,8 @@ func (c Controller) UpdateEmployee(ctx context.Context, e employee.Employee) err
 	return nil
 }
 
-func (c Controller) DeleteEmployee(ctx context.Context, id big.Int) error {
-	tx, err := c.DB.DB.BeginTx(ctx, nil)
+func (c Controller) DeleteEmployee(ctx context.Context, id uint64) error {
+	tx, err := c.DB.DB.BeginTxx(ctx, nil)
 	if err != nil {
 		return err
 	}
@@ -79,10 +81,49 @@ func (c Controller) DeleteEmployee(ctx context.Context, id big.Int) error {
 	return nil
 }
 
+// GetEmployeeList ...
 func (c Controller) GetEmployeeList(ctx context.Context) ([]employee.Employee, error) {
-	return nil, nil
+	rows, err := c.DB.DB.QueryContext(ctx,
+		`select (id, name, position, tu_membership) from employees`)
+	if err != nil {
+		return nil, err
+	}
+
+	var eList []employee.Employee
+	for rows.Next() {
+		e := employee.Employee{}
+		err = rows.Scan(&e.ID, &e.Name, &e.Position, &e.TUMembership)
+		if err != nil {
+			return nil, err
+		}
+		err = c.DB.DB.QueryRowContext(ctx,
+			`select g_id from employees_grades where e_id = $1`,
+			e.ID).Scan(&e.Grade)
+		if err != nil {
+			return nil, err
+		}
+		eList = append(eList, e)
+	}
+
+	return eList, nil
 }
 
-func (c Controller) GetEmployee(ctx context.Context, id big.Int) (employee.Employee, error) {
-	return employee.Employee{}, nil
+// GetEmployee ...
+func (c Controller) GetEmployee(ctx context.Context, id uint64) (employee.Employee, error) {
+	e := employee.Employee{ID: id}
+
+	err := c.DB.DB.QueryRowContext(ctx,
+		`select (name, position, tu_membership) from employees where id = $1`,
+		id).Scan(&e.Name, &e.Position, &e.TUMembership)
+	if err != nil {
+		return employee.Employee{}, err
+	}
+	err = c.DB.DB.QueryRowContext(ctx,
+		`select g_id from employees_grades where e_id = $1`,
+		id).Scan(&e.Grade)
+	if err != nil {
+		return employee.Employee{}, err
+	}
+
+	return e, nil
 }
