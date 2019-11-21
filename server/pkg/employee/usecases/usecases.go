@@ -30,6 +30,13 @@ func (c Controller) DeleteEmployee(ctx context.Context, id uint64) error {
 // GetEmployeeList ...
 func (c Controller) GetEmployeeList(ctx context.Context) ([]employee.Employee, error) {
 	elist, err := c.Repository.GetEmployeeList(ctx)
+
+	for _, e := range elist {
+		go func() {
+			e.Salary["sas"] = 1
+		}()
+	}
+
 	return elist, err
 }
 

@@ -6,8 +6,7 @@
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "react-scripts": "0.9.5",
-    "react-bootstrap": "latest",
-    "axios": "latest"
+    "react-bootstrap": "latest"
   },
   "devDependencies": {},
   "scripts": {

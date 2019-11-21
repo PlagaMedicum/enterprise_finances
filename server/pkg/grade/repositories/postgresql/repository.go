@@ -11,25 +11,25 @@ type Controller struct {
 }
 
 // AddInfo ...
-func (c Controller) AddInfo(ctx context.Context, g grade.Grade) (uint64, error) {
+func (c Controller) AddInfo(ctx context.Context, g grade.Grade) error {
 	tx, err := c.DB.DB.BeginTxx(ctx, nil)
 	if err != nil {
-		return 0, err
+		return err
 	}
 
-	err = tx.QueryRowContext(ctx,
-		`insert into grades (date, coeff) values ($1, $2) returning id`,
-		g.Date, g.Coefficient).Scan(&g.ID)
+	_, err = tx.NamedExecContext(ctx,
+		`insert into grades (id, date, coeff) values (:id, :date, :coeff) returning id`,
+		g)
 	if err != nil {
-		return 0, err
+		return err
 	}
 
 	err = tx.Commit()
 	if err != nil {
-		return 0, err
+		return err
 	}
 
-	return 0, nil
+	return nil
 }
 
 // UpdateInfo ...

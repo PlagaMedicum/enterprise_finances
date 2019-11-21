@@ -81,6 +81,10 @@ func (c Controller) DeleteEmployee(ctx context.Context, id uint64) error {
 	return nil
 }
 
+func (c Controller) GetEmployeeCoefficient(ctx context.Context) (uint64, error) {
+	return 0, nil
+}
+
 // GetEmployeeList ...
 func (c Controller) GetEmployeeList(ctx context.Context) ([]employee.Employee, error) {
 	rows, err := c.DB.DB.QueryContext(ctx,

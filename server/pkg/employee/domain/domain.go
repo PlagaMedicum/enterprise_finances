@@ -6,4 +6,5 @@ type Employee struct {
 	Position     string
 	Grade        uint64
 	TUMembership bool `json:"tu-membership" db:"tu_membership"` // true if employee is trade union member
+	Salary       map[string]uint64
 }

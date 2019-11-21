@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	employee "github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/domain"
 	"github.com/gorilla/mux"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"strconv"
@@ -14,7 +15,7 @@ type Controller struct {
 }
 
 func handleError(err error, w http.ResponseWriter, status int) {
-	log.Error(err)
+	log.Error(err, " status: ", status)
 
 	w.WriteHeader(status)
 	err = json.NewEncoder(w).Encode(err.Error())
@@ -30,15 +31,19 @@ func parseID(r *http.Request) (uint64, error) {
 
 // AddEmployee ...
 func (c Controller) AddEmployee(w http.ResponseWriter, r *http.Request) {
-	log.Info(r.Method + r.URL.Path)
+	log.Info(r.Method, " ", r.URL.Path)
+
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
+	if r.Method == http.MethodOptions {
+		return
+	}
 
 	var e employee.Employee
 	err := json.NewDecoder(r.Body).Decode(&e)
 	if err != nil {
-		handleError(err, w, http.StatusBadRequest)
+		handleError(errors.Errorf("Error decoding json: %s", err), w, http.StatusBadRequest)
 		return
 	}
 	e.ID, err = c.Usecases.AddEmployee(r.Context(), e)
@@ -54,19 +59,25 @@ func (c Controller) AddEmployee(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w, http.StatusInternalServerError)
 		return
 	}
+
+	w.WriteHeader(http.StatusCreated)
 }
 
 // EditEmployee ...
 func (c Controller) EditEmployee(w http.ResponseWriter, r *http.Request) {
-	log.Info(r.Method + r.URL.Path)
+	log.Info(r.Method, " ", r.URL.Path)
+
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
+	if r.Method == http.MethodOptions {
+		return
+	}
 
 	var e employee.Employee
 	err := json.NewDecoder(r.Body).Decode(&e)
 	if err != nil {
-		handleError(err, w, http.StatusBadRequest)
+		handleError(errors.Errorf("Error decoding json: %s", err), w, http.StatusBadRequest)
 		return
 	}
 	e.ID, err = parseID(r)
@@ -79,14 +90,16 @@ func (c Controller) EditEmployee(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w, http.StatusInternalServerError)
 		return
 	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 // DeleteEmployee ...
 func (c Controller) DeleteEmployee(w http.ResponseWriter, r *http.Request) {
-	log.Info(r.Method + r.URL.Path)
+	log.Info(r.Method, " ", r.URL.Path)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
 
 	id, err := parseID(r)
 	if err != nil {
@@ -98,14 +111,16 @@ func (c Controller) DeleteEmployee(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w, http.StatusInternalServerError)
 		return
 	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 // GetEmployeeList ...
 func (c Controller) GetEmployeeList(w http.ResponseWriter, r *http.Request) {
-	log.Info(r.Method + r.URL.Path)
+	log.Info(r.Method, " ", r.URL.Path)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
 
 	elist, err := c.Usecases.GetEmployeeList(r.Context())
 	if err != nil {
@@ -114,17 +129,19 @@ func (c Controller) GetEmployeeList(w http.ResponseWriter, r *http.Request) {
 	}
 	err = json.NewEncoder(w).Encode(elist)
 	if err != nil {
-		handleError(err, w, http.StatusInternalServerError)
+		handleError(errors.Errorf("Error encoding json: %s", err), w, http.StatusInternalServerError)
 		return
 	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 // GetEmployeePayments ...
 func (c Controller) GetEmployeePayments(w http.ResponseWriter, r *http.Request) {
-	log.Info(r.Method + r.URL.Path)
+	log.Info(r.Method, " ", r.URL.Path)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
 
 	id, err := parseID(r)
 	if err != nil {
@@ -138,7 +155,9 @@ func (c Controller) GetEmployeePayments(w http.ResponseWriter, r *http.Request) 
 	}
 	err = json.NewEncoder(w).Encode(e)
 	if err != nil {
-		handleError(err, w, http.StatusInternalServerError)
+		handleError(errors.Errorf("Error encoding json: %s", err), w, http.StatusInternalServerError)
 		return
 	}
+
+	w.WriteHeader(http.StatusOK)
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	grade "github.com/PlagaMedicum/enterprise_finances/server/pkg/grade/domain"
 	"github.com/gorilla/mux"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"strconv"
@@ -14,7 +15,7 @@ type Controller struct {
 }
 
 func handleError(err error, w http.ResponseWriter, status int) {
-	log.Error(err)
+	log.Error(err, " status: ", status)
 
 	w.WriteHeader(status)
 	err = json.NewEncoder(w).Encode(err.Error())
@@ -30,43 +31,43 @@ func parseID(r *http.Request) (uint64, error) {
 
 // AddInfo ...
 func (c Controller) AddInfo(w http.ResponseWriter, r *http.Request) {
-	log.Info(r.Method + r.URL.Path)
+	log.Info(r.Method, " ", r.URL.Path)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
+	if r.Method == http.MethodOptions {
+		return
+	}
 
 	g := grade.Grade{}
 	err := json.NewDecoder(r.Body).Decode(&g)
 	if err != nil {
-		handleError(err, w, http.StatusInternalServerError)
+		handleError(errors.Errorf("Error decoding json: %s", err), w, http.StatusInternalServerError)
 		return
 	}
-	g.ID, err = c.Usecases.AddInfo(r.Context(), g)
+	err = c.Usecases.AddInfo(r.Context(), g)
 	if err != nil {
 		handleError(err, w, http.StatusInternalServerError)
 		return
 	}
-	resp := struct {
-		ID uint64 `json:"id"`
-	}{g.ID}
-	err = json.NewEncoder(w).Encode(resp)
-	if err != nil {
-		handleError(err, w, http.StatusInternalServerError)
-		return
-	}
+
+	w.WriteHeader(http.StatusCreated)
 }
 
 // EditInfo ...
 func (c Controller) EditInfo(w http.ResponseWriter, r *http.Request) {
-	log.Info(r.Method + r.URL.Path)
+	log.Info(r.Method, " ", r.URL.Path)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
+	if r.Method == http.MethodOptions {
+		return
+	}
 
 	g := grade.Grade{}
 	err := json.NewDecoder(r.Body).Decode(&g)
 	if err != nil {
-		handleError(err, w, http.StatusInternalServerError)
+		handleError(errors.Errorf("Error decoding json: %s", err), w, http.StatusInternalServerError)
 		return
 	}
 	g.ID, err = parseID(r)
@@ -79,14 +80,16 @@ func (c Controller) EditInfo(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w, http.StatusInternalServerError)
 		return
 	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 // DeleteInfo ...
 func (c Controller) DeleteInfo(w http.ResponseWriter, r *http.Request) {
-	log.Info(r.Method + r.URL.Path)
+	log.Info(r.Method, " ", r.URL.Path)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
 
 	id, err := parseID(r)
 	if err != nil {
@@ -98,14 +101,16 @@ func (c Controller) DeleteInfo(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w, http.StatusInternalServerError)
 		return
 	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 // GetGradeList ...
 func (c Controller) GetGradeList(w http.ResponseWriter, r *http.Request) {
-	log.Info(r.Method + r.URL.Path)
+	log.Info(r.Method, " ", r.URL.Path)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
 
 	glist, err := c.Usecases.GetGradeList(r.Context())
 	if err != nil {
@@ -113,7 +118,9 @@ func (c Controller) GetGradeList(w http.ResponseWriter, r *http.Request) {
 	}
 	err = json.NewEncoder(w).Encode(glist)
 	if err != nil {
-		handleError(err, w, http.StatusInternalServerError)
+		handleError(errors.Errorf("Error encoding json: %s", err), w, http.StatusInternalServerError)
 		return
 	}
+
+	w.WriteHeader(http.StatusOK)
 }

@@ -10,9 +10,9 @@ type Controller struct {
 }
 
 // AddInfo ...
-func (c Controller) AddInfo(ctx context.Context, g grade.Grade) (uint64, error) {
-	id, err := c.Repository.AddInfo(ctx, g)
-	return id, err
+func (c Controller) AddInfo(ctx context.Context, g grade.Grade) error {
+	err := c.Repository.AddInfo(ctx, g)
+	return err
 }
 
 // EditInfo ...
