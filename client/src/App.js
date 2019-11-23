@@ -1,27 +1,34 @@
 import React, {Component} from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Alert from 'react-bootstrap/Alert';
-import RequestButton from './components/RequestButton/RequestButton';
+import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
+import NavBar from "./components/NavBar/NavBar";
+import Home from "./components/Home/Home";
+import Employees from "./components/Employees/Employees";
+import Grades from "./components/Grades/Grades";
 
 class App extends Component {
   render() {
+    const style = {
+      padding: 50
+    };
+
     return (
-        <div className="App">
-          <Alert variant="success">
-            <Alert.Heading>Ah, ello there, Gordn Freeman!</Alert.Heading>
-            <p>
-              Why do we all must to wear those ridiculous ties?!
-            </p>
-            <hr/>
-            <p className="mb-0">
-              Did you see my coffeecup?
-            </p>
-          </Alert>
-          <ErrorBoundary>
-            <RequestButton/>
-          </ErrorBoundary>
-        </div>
+        <Router>
+          <div className="App">
+            <ErrorBoundary>
+              <NavBar/>
+            </ErrorBoundary>
+            <ErrorBoundary>
+              <section style={style}>
+                <Switch>
+                  <Route path="/" exact component={Home}/>
+                  <Route path="/employees" component={Employees}/>
+                  <Route path="/grades" component={Grades}/>
+                </Switch>
+              </section>
+            </ErrorBoundary>
+          </div>
+        </Router>
     );
   }
 }
