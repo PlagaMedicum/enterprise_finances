@@ -1,31 +1,48 @@
 import React from "react";
-import Table from "react-bootstrap/Table";
 import Jumbotron from "react-bootstrap/Jumbotron";
 import Button from "react-bootstrap/Button";
 import DatePicker from "../DatePicker/DatePicker";
+import axios from "axios";
+import ReactTable from "react-table";
+import "react-table/react-table.css";
 
 class Grades extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      items: []
+    };
+  }
+
+  componentDidMount() {
+    axios.get('http://localhost:1540/grade')
+        .then(resp => this.setState({
+                items: resp.data
+              }))
+        .catch(
+            error => console.log(error)
+        );
+  }
+
   render() {
+    const data = this.state.items;
+    const columns = [{
+      Header: 'id',
+      accessor: 'id'
+    }, {
+      Header: 'Grade',
+      accessor: 'grade'
+    }, {
+      Header: 'Coefficient',
+      accessor: 'coefficient'
+    }];
+
     return (
         <Jumbotron>
           <DatePicker/>
           <Button block variant="success">➕</Button>
           <p/>
-          <Table striped bordered hover variant="warning">
-            <thead>
-            <tr>
-              <th>id</th>
-              <th>Grade</th>
-              <th>Coefficient</th>
-              <th/>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-              <th/>
-            </tr>
-            </tbody>
-          </Table>
+          <ReactTable style={{color: 'black'}} data={data} columns={columns} defaultPageSize={3} pageSizeOptions={[3, 6]}/>
         </Jumbotron>
     );
   }

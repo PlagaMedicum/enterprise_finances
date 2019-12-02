@@ -90,7 +90,7 @@ func (c Controller) GetEmployeeList(ctx context.Context) ([]employee.Employee, e
 	rows, err := c.DB.DB.QueryContext(ctx,
 		`select (id, name, position, tu_membership) from employees`)
 	if err != nil {
-		return nil, err
+		return nil, errors.Errorf("Error selecting employees rows: %s", err)
 	}
 
 	var eList []employee.Employee
