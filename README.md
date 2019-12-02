@@ -1,5 +1,5 @@
-# Enterprise finances app
-[![License](https://img.shields.io/github/license/PlagaMedicum/enterprise_finances.svg)](https://github.com/PlagaMedicum/enterprise_finances/blob/master/LICENSE)
+# Black Mesa Financial Systems — Enterprise finances app
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/PlagaMedicum/ostis-syntax.vim/blob/master/LICENSE)
 ### Technologies
 #### Frontend
 1. [React Bootstrap](https://react-bootstrap.github.io/)
