@@ -87,7 +87,7 @@ func (c Controller) GetGradeList(ctx context.Context) ([]grade.Grade, error) { /
 	var gList []grade.Grade
 	for rows.Next() {
 		g := grade.Grade{}
-		err = rows.Scan(&g.ID, &g.Date, &g.Coefficient)
+		err = rows.Scan(&g.ID, &g.Date, &g.Coefficient) // FIXME: multiple scan
 		if err != nil {
 			return nil, err
 		}

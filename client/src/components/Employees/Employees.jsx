@@ -14,6 +14,7 @@ class Employees extends React.Component {
   // 3. Add DELETE request
   // 4. Add addition window with a POST request inside
   // 5. Add GET request for specific date
+  // 6. Add window of employee payments by dates
 
   constructor(props){
     super(props);

@@ -98,7 +98,7 @@ func (c Controller) GetEmployeeList(ctx context.Context) ([]employee.Employee, e
 	var eList []employee.Employee
 	for rows.Next() {
 		e := employee.Employee{}
-		err = rows.Scan(&e.ID, &e.Name, &e.Position, &e.TUMembership) // TODO: Fix multiple scan
+		err = rows.Scan(&e.ID, &e.Name, &e.Position, &e.TUMembership) // FIXME: Fix multiple scan
 		if err != nil {
 			return nil, err
 		}
@@ -121,7 +121,7 @@ func (c Controller) GetEmployee(ctx context.Context, id uint64) (employee.Employ
 
 	err := c.DB.DB.QueryRowContext(ctx,
 		`select (name, position, tu_membership) from employees where id = $1`,
-		id).Scan(&e.Name, &e.Position, &e.TUMembership) // TODO: Fix multiple scan
+		id).Scan(&e.Name, &e.Position, &e.TUMembership) // FIXME: Fix multiple scan
 	if err != nil {
 		return employee.Employee{}, err
 	}
