@@ -7,6 +7,14 @@ import ReactTable from "react-table";
 import "react-table/react-table.css";
 
 class Grades extends React.Component {
+
+  // TODO:
+  // 1. Add edit✎ and delete❌ in each row
+  // 2. Add edit window with a PUT request inside
+  // 3. Add DELETE request
+  // 4. Add addition window with a POST request inside
+  // 5. Add GET request for specific date
+
   constructor(props){
     super(props);
     this.state = {

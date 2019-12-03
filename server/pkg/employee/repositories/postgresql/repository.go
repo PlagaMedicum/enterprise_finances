@@ -62,6 +62,7 @@ func (c Controller) UpdateEmployee(ctx context.Context, e employee.Employee) err
 	return nil
 }
 
+// DeleteEmployee ...
 func (c Controller) DeleteEmployee(ctx context.Context, id uint64) error {
 	tx, err := c.DB.DB.BeginTxx(ctx, nil)
 	if err != nil {
@@ -81,12 +82,13 @@ func (c Controller) DeleteEmployee(ctx context.Context, id uint64) error {
 	return nil
 }
 
-func (c Controller) GetEmployeeCoefficient(ctx context.Context) (uint64, error) {
+func (c Controller) GetEmployeeCoefficient(ctx context.Context) (uint64, error) { // TODO: Specify the date
+	// TODO
 	return 0, nil
 }
 
 // GetEmployeeList ...
-func (c Controller) GetEmployeeList(ctx context.Context) ([]employee.Employee, error) {
+func (c Controller) GetEmployeeList(ctx context.Context) ([]employee.Employee, error) { // TODO: Specify the date
 	rows, err := c.DB.DB.QueryContext(ctx,
 		`select (id, name, position, tu_membership) from employees`)
 	if err != nil {
@@ -96,7 +98,7 @@ func (c Controller) GetEmployeeList(ctx context.Context) ([]employee.Employee, e
 	var eList []employee.Employee
 	for rows.Next() {
 		e := employee.Employee{}
-		err = rows.Scan(&e.ID, &e.Name, &e.Position, &e.TUMembership)
+		err = rows.Scan(&e.ID, &e.Name, &e.Position, &e.TUMembership) // TODO: Fix multiple scan
 		if err != nil {
 			return nil, err
 		}
@@ -106,6 +108,7 @@ func (c Controller) GetEmployeeList(ctx context.Context) ([]employee.Employee, e
 		if err != nil {
 			return nil, err
 		}
+		// TODO: Calculate salary for the date
 		eList = append(eList, e)
 	}
 
@@ -113,12 +116,12 @@ func (c Controller) GetEmployeeList(ctx context.Context) ([]employee.Employee, e
 }
 
 // GetEmployee ...
-func (c Controller) GetEmployee(ctx context.Context, id uint64) (employee.Employee, error) {
+func (c Controller) GetEmployee(ctx context.Context, id uint64) (employee.Employee, error) { // TODO: Specify the date
 	e := employee.Employee{ID: id}
 
 	err := c.DB.DB.QueryRowContext(ctx,
 		`select (name, position, tu_membership) from employees where id = $1`,
-		id).Scan(&e.Name, &e.Position, &e.TUMembership)
+		id).Scan(&e.Name, &e.Position, &e.TUMembership) // TODO: Fix multiple scan
 	if err != nil {
 		return employee.Employee{}, err
 	}
@@ -128,6 +131,6 @@ func (c Controller) GetEmployee(ctx context.Context, id uint64) (employee.Employ
 	if err != nil {
 		return employee.Employee{}, err
 	}
-
+	// TODO: Calculate salary for the date
 	return e, nil
 }
