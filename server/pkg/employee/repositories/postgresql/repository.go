@@ -90,7 +90,7 @@ func (c Controller) GetEmployeeCoefficient(ctx context.Context) (uint64, error) 
 // GetEmployeeList ...
 func (c Controller) GetEmployeeList(ctx context.Context) ([]employee.Employee, error) { // TODO: Specify the date
 	rows, err := c.DB.DB.QueryContext(ctx,
-		`select (id, name, position, tu_membership) from employees`)
+		`select id, name, position, tu_membership from employees`)
 	if err != nil {
 		return nil, errors.Errorf("Error selecting employees rows: %s", err)
 	}
@@ -98,7 +98,7 @@ func (c Controller) GetEmployeeList(ctx context.Context) ([]employee.Employee, e
 	var eList []employee.Employee
 	for rows.Next() {
 		e := employee.Employee{}
-		err = rows.Scan(&e.ID, &e.Name, &e.Position, &e.TUMembership) // FIXME: Fix multiple scan
+		err = rows.Scan(&e.ID, &e.Name, &e.Position, &e.TUMembership)
 		if err != nil {
 			return nil, err
 		}
@@ -120,8 +120,8 @@ func (c Controller) GetEmployee(ctx context.Context, id uint64) (employee.Employ
 	e := employee.Employee{ID: id}
 
 	err := c.DB.DB.QueryRowContext(ctx,
-		`select (name, position, tu_membership) from employees where id = $1`,
-		id).Scan(&e.Name, &e.Position, &e.TUMembership) // FIXME: Fix multiple scan
+		`select name, position, tu_membership from employees where id = $1`,
+		id).Scan(&e.Name, &e.Position, &e.TUMembership)
 	if err != nil {
 		return employee.Employee{}, err
 	}

@@ -31,11 +31,14 @@ func (c Controller) DeleteEmployee(ctx context.Context, id uint64) error {
 func (c Controller) GetEmployeeList(ctx context.Context) ([]employee.Employee, error) {
 	elist, err := c.Repository.GetEmployeeList(ctx)
 
-	for _, e := range elist {
+	for _, e := range elist { // TODO: Create Salary calculatio logic
+		// FIXME: nil map
 		go func() {
 			e.Salary["sas"] = 1
 		}()
 	}
+
+	// TODO: Make waiting for routines
 
 	return elist, err
 }

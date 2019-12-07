@@ -79,7 +79,7 @@ func (c Controller) DeleteInfo(ctx context.Context, id uint64) error { // TODO: 
 // GetGradeList ...
 func (c Controller) GetGradeList(ctx context.Context) ([]grade.Grade, error) { // TODO: specify the date
 	rows, err := c.DB.DB.QueryContext(ctx,
-		`select (id, date, coeff) from grades`)
+		`select id, date, coeff from grades`)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func (c Controller) GetGradeList(ctx context.Context) ([]grade.Grade, error) { /
 	var gList []grade.Grade
 	for rows.Next() {
 		g := grade.Grade{}
-		err = rows.Scan(&g.ID, &g.Date, &g.Coefficient) // FIXME: multiple scan
+		err = rows.Scan(&g.ID, &g.Date, &g.Coefficient)
 		if err != nil {
 			return nil, err
 		}
