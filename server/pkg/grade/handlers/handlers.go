@@ -80,8 +80,6 @@ func (c Controller) EditInfo(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w, http.StatusInternalServerError)
 		return
 	}
-
-	w.WriteHeader(http.StatusOK)
 }
 
 // DeleteInfo ...
@@ -101,8 +99,6 @@ func (c Controller) DeleteInfo(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w, http.StatusInternalServerError)
 		return
 	}
-
-	w.WriteHeader(http.StatusOK)
 }
 
 // GetGradeList ...
@@ -121,6 +117,4 @@ func (c Controller) GetGradeList(w http.ResponseWriter, r *http.Request) {
 		handleError(errors.Errorf("Error encoding json: %s", err), w, http.StatusInternalServerError)
 		return
 	}
-
-	w.WriteHeader(http.StatusOK)
 }

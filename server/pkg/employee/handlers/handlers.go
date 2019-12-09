@@ -90,8 +90,6 @@ func (c Controller) EditEmployee(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w, http.StatusInternalServerError)
 		return
 	}
-
-	w.WriteHeader(http.StatusOK)
 }
 
 // DeleteEmployee ...
@@ -132,8 +130,6 @@ func (c Controller) GetEmployeeList(w http.ResponseWriter, r *http.Request) {
 		handleError(errors.Errorf("Error encoding json: %s", err), w, http.StatusInternalServerError)
 		return
 	}
-
-	w.WriteHeader(http.StatusOK)
 }
 
 // GetEmployeePayments ...
@@ -158,6 +154,4 @@ func (c Controller) GetEmployeePayments(w http.ResponseWriter, r *http.Request) 
 		handleError(errors.Errorf("Error encoding json: %s", err), w, http.StatusInternalServerError)
 		return
 	}
-
-	w.WriteHeader(http.StatusOK)
 }

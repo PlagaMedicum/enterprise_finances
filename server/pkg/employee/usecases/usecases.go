@@ -3,6 +3,7 @@ package usecases
 import (
 	"context"
 	employee "github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/domain"
+	"sync"
 )
 
 type Controller struct {
@@ -31,15 +32,17 @@ func (c Controller) DeleteEmployee(ctx context.Context, id uint64) error {
 func (c Controller) GetEmployeeList(ctx context.Context) ([]employee.Employee, error) {
 	elist, err := c.Repository.GetEmployeeList(ctx)
 
-	for _, e := range elist { // TODO: Create Salary calculatio logic
-		// FIXME: nil map
-		go func() {
-			e.Salary["sas"] = 1
-		}()
+	var w sync.WaitGroup
+	for i := range elist { // TODO: Create Salary calculation logic
+		elist[i].Salary = make(map[string]uint64)
+		w.Add(1)
+		go func(e *employee.Employee, w *sync.WaitGroup, i int) {
+			e.Salary["sas"] = uint64(i)
+			w.Done()
+		}(&elist[i], &w, i)
 	}
 
-	// TODO: Make waiting for routines
-
+	w.Wait()
 	return elist, err
 }
 
