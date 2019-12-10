@@ -5,14 +5,18 @@ import DatePicker from "../DatePicker/DatePicker";
 import axios from "axios";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
-import EditModal from "./EditModal";
+import EditModal from "./Modals/EditModal";
+import DeleteModal from "./Modals/DeleteModal";
+import AddModal from "./Modals/AddModal";
 
 class Grades extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       items: [],
-      edit: false
+      add: false,
+      edit: false,
+      delete: false
     };
   }
 
@@ -28,15 +32,17 @@ class Grades extends React.Component {
 
   addElement(e) {
     // TODO: Showing modal and sending POST http request
+    this.setState({add: true, edit: false, delete: false})
   }
 
   editElement(e, row) {
     // TODO: Showing modal and sending POST http request
-    this.setState({edit: true})
+    this.setState({add: false, edit: true, delete: false})
   }
 
   deleteElement(e, row) {
     // TODO: Showing modal and sending DELETE http request
+    this.setState({add: false, edit: false, delete: true})
   }
 
   render() {
@@ -71,12 +77,12 @@ class Grades extends React.Component {
         <Jumbotron>
           <DatePicker/>
           <Button block variant="success" onClick={e => this.addElement(e)}>add</Button>
+          <AddModal show={this.state.add} hide={() => this.setState({add: false})}/>
           <p/>
           <ReactTable style={{color: 'black'}} data={data} columns={columns} defaultPageSize={10}
                       pageSizeOptions={[10, 20, 30]}/>
-          <EditModal show={this.state.edit} hide={() => {
-            this.setState({show: false})
-          }}/>
+          <EditModal show={this.state.edit} hide={() => this.setState({edit: false})}/>
+          <DeleteModal show={this.state.delete} hide={() => this.setState({delete: false})}/>
         </Jumbotron>
     );
   }
