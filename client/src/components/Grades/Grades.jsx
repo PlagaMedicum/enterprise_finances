@@ -30,18 +30,18 @@ class Grades extends React.Component {
         );
   }
 
-  addElement(e) {
+  addElement() {
     // TODO: Showing modal and sending POST http request
     this.setState({add: true, edit: false, delete: false})
   }
 
-  editElement(e, row) {
+  editElement() {
     // TODO: Showing modal and sending POST http request
     this.setState({add: false, edit: true, delete: false})
   }
 
-  deleteElement(e, row) {
-    // TODO: Showing modal and sending DELETE http request
+  deleteElement() {
+    // TODO: sending DELETE http request
     this.setState({add: false, edit: false, delete: true})
   }
 
@@ -63,20 +63,20 @@ class Grades extends React.Component {
       Header: "",
       width: 100,
       Cell: ({row}) => (
-          <Button block variant="primary" onClick={e => this.editElement(e, row)}>edit</Button>
+          <Button block variant="primary" onClick={() => this.editElement()}>edit</Button>
       )
     }, {
       Header: "",
       width: 100,
       Cell: ({row}) => (
-          <Button block variant="danger" onClick={e => this.deleteElement(e, row)}>delete</Button>
+          <Button block variant="danger" onClick={() => this.deleteElement()}>delete</Button>
       )
     }];
 
     return (
         <Jumbotron>
           <DatePicker/>
-          <Button block variant="success" onClick={e => this.addElement(e)}>add</Button>
+          <Button block variant="success" onClick={() => this.addElement()}>add</Button>
           <AddModal show={this.state.add} hide={() => this.setState({add: false})}/>
           <p/>
           <ReactTable style={{color: 'black'}} data={data} columns={columns} defaultPageSize={10}
