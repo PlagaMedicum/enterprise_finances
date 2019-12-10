@@ -9,7 +9,7 @@ import "react-table/react-table.css";
 class Employees extends React.Component {
 
   // TODO:
-  // 1. Add edit✎ and delete❌ in each row(maybe in view window)
+  // 1. Add edit and delete in each row(maybe in view window)
   // 2. Add edit window with a PUT request inside
   // 3. Add DELETE request
   // 4. Add addition window with a POST request inside
@@ -50,9 +50,10 @@ class Employees extends React.Component {
     return (
         <Jumbotron>
           <DatePicker/>
-          <Button block variant="success">➕</Button>
+          <Button block variant="success">add</Button>
           <p/>
-          <ReactTable style={{color: 'black'}} data={data} columns={columns} defaultPageSize={3} pageSizeOptions={[10, 20, 30]}/>
+          <ReactTable style={{color: 'black'}} data={data} columns={columns} defaultPageSize={10}
+                      pageSizeOptions={[10, 20, 30]}/>
         </Jumbotron>
     );
   }

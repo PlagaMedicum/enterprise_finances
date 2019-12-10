@@ -18,7 +18,7 @@ func (c Controller) AddInfo(ctx context.Context, g grade.Grade) error {
 	}
 
 	_, err = tx.NamedExecContext(ctx,
-		`insert into grades (id, date, coeff) values (:id, :date, :coeff) returning id`,
+		`insert into grades (id, num, date, coeff) values (:id, :num, :date, :coeff) returning id`,
 		g)
 	if err != nil {
 		return err
@@ -79,7 +79,7 @@ func (c Controller) DeleteInfo(ctx context.Context, id uint64) error { // TODO: 
 // GetGradeList ...
 func (c Controller) GetGradeList(ctx context.Context) ([]grade.Grade, error) { // TODO: specify the date
 	rows, err := c.DB.DB.QueryContext(ctx,
-		`select id, date, coeff from grades`)
+		`select id, num, date, coeff from grades`)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func (c Controller) GetGradeList(ctx context.Context) ([]grade.Grade, error) { /
 	var gList []grade.Grade
 	for rows.Next() {
 		g := grade.Grade{}
-		err = rows.Scan(&g.ID, &g.Date, &g.Coefficient)
+		err = rows.Scan(&g.ID, &g.Num, &g.Date, &g.Coefficient)
 		if err != nil {
 			return nil, err
 		}
