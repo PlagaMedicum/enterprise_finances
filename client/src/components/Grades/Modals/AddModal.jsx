@@ -8,11 +8,13 @@ function AddModal(props) {
   };
 
   return (
-      <Modal show={props.show} onHide={props.hide}>
+      <Modal style={style} show={props.show} onHide={props.hide}>
         <Modal.Header>
-          <Modal.Title style={style}>Add Grade</Modal.Title>
+          <Modal.Title>Add Grade</Modal.Title>
         </Modal.Header>
-        <Modal.Body style={style}>Body</Modal.Body>
+        <Modal.Body>
+          // TODO
+        </Modal.Body>
         <Modal.Footer>
           <Button variant="danger" onClick={props.hide}>Close</Button>
         </Modal.Footer>

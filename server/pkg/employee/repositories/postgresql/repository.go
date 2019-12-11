@@ -59,6 +59,11 @@ func (c Controller) UpdateEmployee(ctx context.Context, e employee.Employee) err
 		return err
 	}
 
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -78,6 +83,14 @@ func (c Controller) DeleteEmployee(ctx context.Context, id uint64) error {
 	_, err = tx.ExecContext(ctx,
 		`delete from employees_grades where e_id = $1`,
 		id)
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

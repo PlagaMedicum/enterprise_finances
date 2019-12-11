@@ -8,11 +8,11 @@ function DeleteModal(props) {
   };
 
   return (
-      <Modal show={props.show} onHide={props.hide}>
-        <Modal.Header style={style}>
-          <Modal.Title>Delete Employee</Modal.Title>
+      <Modal style={style} show={props.show} onHide={props.hide}>
+        <Modal.Header>
+          <Modal.Title>{props.title}</Modal.Title>
         </Modal.Header>
-        <Modal.Body style={style}>
+        <Modal.Body>
           Do you really want to delete this piece of very secret information?<br/>
           Note: Don't ever make those steps without agreement of your superior. Elsewise you will be threaten as hostile
           subject which must be immediately destroyed with flame and blame!

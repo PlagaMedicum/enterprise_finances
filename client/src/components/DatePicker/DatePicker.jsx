@@ -6,37 +6,31 @@ class DatePicker extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      day: null,
-      month: "month",
-      year: null
+      day: 0,
+      month: 0,
+      year: 0
     }
   }
 
   render() {
     return (
         <InputGroup>
-          <FormControl placeholder="day" onChange={(event) => {
-            this.setState({day: event.target.value})
-          }}/>
-          <select className="custom-select" onChange={(event) => {
-            this.setState({month: event.target.value})
-          }}>
-            <option value="1">Jan</option>
-            <option value="2">Feb</option>
-            <option value="3">Mar</option>
-            <option value="4">Apr</option>
-            <option value="5">May</option>
-            <option value="6">Jun</option>
-            <option value="7">Jul</option>
-            <option value="8">Aug</option>
-            <option value="9">Sep</option>
-            <option value="10">Oct</option>
-            <option value="11">Nov</option>
-            <option value="12">Dec</option>
+          <FormControl placeholder="day" onChange={e => this.props.setters.setDay(e.target.value)}/>
+          <select className="custom-select" onChange={e => this.props.setters.setMonth(e.target.value)}>
+            <option value="1">jan</option>
+            <option value="2">feb</option>
+            <option value="3">mar</option>
+            <option value="4">apr</option>
+            <option value="5">may</option>
+            <option value="6">jun</option>
+            <option value="7">jul</option>
+            <option value="8">aug</option>
+            <option value="9">sep</option>
+            <option value="10">oct</option>
+            <option value="11">nov</option>
+            <option value="12">dec</option>
           </select>
-          <FormControl placeholder="year" onChange={(event) => {
-            this.setState({year: event.target.value})
-          }}/>
+          <FormControl placeholder="year" onChange={e => this.props.setters.setYear(e.target.value)}/>
         </InputGroup>
     );
   }

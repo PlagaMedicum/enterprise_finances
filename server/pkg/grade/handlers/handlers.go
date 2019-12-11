@@ -89,6 +89,7 @@ func (c Controller) DeleteInfo(w http.ResponseWriter, r *http.Request) {
 	log.Info(r.Method, " ", r.URL.Path)
 
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "DELETE, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
 	w.Header().Set("Content-Type", "application/json")
 	if r.Method == http.MethodOptions {

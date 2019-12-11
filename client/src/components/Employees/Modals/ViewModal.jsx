@@ -8,11 +8,15 @@ function ViewModal(props) {
   };
 
   return (
-      <Modal show={props.show} onHide={props.hide}>
+      <Modal style={style} show={props.show} onHide={props.hide}>
         <Modal.Header>
-          <Modal.Title style={style}>View Employee</Modal.Title>
+          <Modal.Title>View Employee</Modal.Title>
         </Modal.Header>
-        <Modal.Body style={style}>Body</Modal.Body>
+        <Modal.Body>
+          <b>#{props.id}</b><br/>
+          <b>Name:</b> {}<br/>
+          <b>Position:</b> {}
+        </Modal.Body>
         <Modal.Footer>
           <Button variant="danger" onClick={props.hide}>Close</Button>
         </Modal.Footer>
