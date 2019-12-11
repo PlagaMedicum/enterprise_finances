@@ -44,12 +44,12 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/employee/add", eh.AddEmployee).Methods(http.MethodPost, http.MethodOptions) // TODO: Create another POST request, changing date for id
 	r.HandleFunc("/employee/{id}", eh.EditEmployee).Methods(http.MethodPut, http.MethodOptions)
-	r.HandleFunc("/employee/{id}/delete", eh.DeleteEmployee).Methods(http.MethodDelete)
+	r.HandleFunc("/employee/{id}/delete", eh.DeleteEmployee).Methods(http.MethodDelete, http.MethodOptions)
 	r.HandleFunc("/employee", eh.GetEmployeeList).Methods(http.MethodGet)
 	r.HandleFunc("/employee/{id}", eh.GetEmployeePayments).Methods(http.MethodGet)
 	r.HandleFunc("/grade/add", gh.AddInfo).Methods(http.MethodPost, http.MethodOptions) // TODO: Create another POST request for adding info, changing date for id
 	r.HandleFunc("/grade/{id}", gh.EditInfo).Methods(http.MethodPut, http.MethodOptions)
-	r.HandleFunc("/grade/{id}/delete", gh.DeleteInfo).Methods(http.MethodDelete)
+	r.HandleFunc("/grade/{id}/delete", gh.DeleteInfo).Methods(http.MethodDelete, http.MethodOptions)
 	r.HandleFunc("/grade", gh.GetGradeList).Methods(http.MethodGet)
 	http.Handle("/", r)
 	s := http.Server{

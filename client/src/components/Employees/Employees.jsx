@@ -23,36 +23,54 @@ class Employees extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      host: 'http://localhost:1540',
       items: [],
-      add: false,
-      view: false,
-      edit: false,
-      delete: false
+      adding: false,
+      viewing: false,
+      editing: false,
+      deleting: false,
+      row: null
     }
   }
 
   componentDidMount() {
-    axios.get('http://localhost:1540/employee') // TODO: Add GET request with specific date
-        .then(resp => this.setState({
-          items: resp.data
-        }))
-        .catch(error => console.log(error))
+    this.updateTable()
   }
 
-  addElement() {
-    this.setState({add: true, view: false, edit: false, delete: false})
+  updateTable() {
+    axios.get(`${this.state.host}/employee`) // TODO: Add GET request with specific date
+        .then(resp => {
+          if (resp.data != null) {
+            this.setState({
+              items: resp.data
+            })
+          }
+        })
+        .catch(err => console.log(err))
   }
 
-  viewElement() {
-    this.setState({add: false, view: true, edit: false, delete: false})
+  showAdd() {
+    this.setState({adding: true, viewing: false, editing: false, deleting: false})
   }
 
-  editElement() {
-    this.setState({add: false, view: false, edit: true, delete: false})
+  showView() {
+    this.setState({adding: false, viewing: true, editing: false, deleting: false})
   }
 
-  deleteElement() {
-    this.setState({add: false, view: false, edit: false, delete: true})
+  showEdit() {
+    this.setState({adding: false, viewing: false, editing: true, deleting: false})
+  }
+
+  showDelete(row) {
+    this.setState({adding: false, viewing: false, editing: false, deleting: true, row: row})
+  }
+
+  deleteElement(row) {
+    axios.delete(`${this.state.host}/employee/${row.id}/delete`)
+        .then(resp => console.log(resp))
+        .catch(err => console.log(err));
+    this.setState({deleting: false, row: null});
+    this.updateTable();
   }
 
   render() {
@@ -73,33 +91,34 @@ class Employees extends React.Component {
       Header: "",
       width: 100,
       Cell: ({row}) => (
-          <Button block variant="warning" onClick={() => this.viewElement()}>view</Button>
+          <Button block variant="warning" onClick={() => this.showView()}>view</Button>
       )
     }, {
       Header: "",
       width: 100,
       Cell: ({row}) => (
-          <Button block variant="primary" onClick={() => this.editElement()}>edit</Button>
+          <Button block variant="primary" onClick={() => this.showEdit()}>edit</Button>
       )
     }, {
       Header: "",
       width: 100,
       Cell: ({row}) => (
-          <Button block variant="danger" onClick={() => this.deleteElement()}>delete</Button>
+          <Button block variant="danger" onClick={() => this.showDelete(row)}>delete</Button>
       )
     }];
 
     return (
         <Jumbotron>
           <DatePicker/>
-          <Button block variant="success" onClick={() => this.addElement()}>add</Button>
-          <AddModal show={this.state.add} hide={() => this.setState({add: false})}/>
+          <Button block variant="success" onClick={() => this.showAdd()}>add</Button>
+          <AddModal show={this.state.adding} hide={() => this.setState({adding: false})}/>
           <p/>
           <ReactTable style={{color: 'black'}} data={data} columns={columns} defaultPageSize={10}
                       pageSizeOptions={[10, 20, 30]}/>
-          <ViewModal show={this.state.view} hide={() => this.setState({view: false})}/>
-          <EditModal show={this.state.edit} hide={() => this.setState({edit: false})}/>
-          <DeleteModal show={this.state.delete} hide={() => this.setState({delete: false})}/>
+          <ViewModal show={this.state.viewing} hide={() => this.setState({viewing: false})}/>
+          <EditModal show={this.state.editing} hide={() => this.setState({editing: false})}/>
+          <DeleteModal show={this.state.deleting} hide={() => this.setState({deleting: false, row: null})}
+                       confirm={() => this.deleteElement(this.state.row)}/>
         </Jumbotron>
     );
   }

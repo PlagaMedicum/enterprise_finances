@@ -95,9 +95,13 @@ func (c Controller) EditEmployee(w http.ResponseWriter, r *http.Request) {
 // DeleteEmployee ...
 func (c Controller) DeleteEmployee(w http.ResponseWriter, r *http.Request) {
 	log.Info(r.Method, " ", r.URL.Path)
+
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
 	w.Header().Set("Content-Type", "application/json")
+	if r.Method == http.MethodOptions {
+		return
+	}
 
 	id, err := parseID(r)
 	if err != nil {
@@ -116,6 +120,7 @@ func (c Controller) DeleteEmployee(w http.ResponseWriter, r *http.Request) {
 // GetEmployeeList ...
 func (c Controller) GetEmployeeList(w http.ResponseWriter, r *http.Request) {
 	log.Info(r.Method, " ", r.URL.Path)
+
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
 	w.Header().Set("Content-Type", "application/json")
@@ -135,6 +140,7 @@ func (c Controller) GetEmployeeList(w http.ResponseWriter, r *http.Request) {
 // GetEmployeePayments ...
 func (c Controller) GetEmployeePayments(w http.ResponseWriter, r *http.Request) {
 	log.Info(r.Method, " ", r.URL.Path)
+
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
 	w.Header().Set("Content-Type", "application/json")

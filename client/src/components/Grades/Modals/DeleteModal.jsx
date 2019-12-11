@@ -18,7 +18,7 @@ function DeleteModal(props) {
           subject which must be immediately destroyed with flame and blame!
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="success">Agree</Button>
+          <Button variant="success" onClick={props.confirm}>Agree</Button>
           <Button variant="danger" onClick={props.hide}>Close</Button>
         </Modal.Footer>
       </Modal>

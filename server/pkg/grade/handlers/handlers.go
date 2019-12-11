@@ -32,6 +32,7 @@ func parseID(r *http.Request) (uint64, error) {
 // AddInfo ...
 func (c Controller) AddInfo(w http.ResponseWriter, r *http.Request) {
 	log.Info(r.Method, " ", r.URL.Path)
+
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
 	w.Header().Set("Content-Type", "application/json")
@@ -57,6 +58,7 @@ func (c Controller) AddInfo(w http.ResponseWriter, r *http.Request) {
 // EditInfo ...
 func (c Controller) EditInfo(w http.ResponseWriter, r *http.Request) {
 	log.Info(r.Method, " ", r.URL.Path)
+
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
 	w.Header().Set("Content-Type", "application/json")
@@ -85,9 +87,13 @@ func (c Controller) EditInfo(w http.ResponseWriter, r *http.Request) {
 // DeleteInfo ...
 func (c Controller) DeleteInfo(w http.ResponseWriter, r *http.Request) {
 	log.Info(r.Method, " ", r.URL.Path)
+
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
 	w.Header().Set("Content-Type", "application/json")
+	if r.Method == http.MethodOptions {
+		return
+	}
 
 	id, err := parseID(r)
 	if err != nil {
@@ -104,6 +110,7 @@ func (c Controller) DeleteInfo(w http.ResponseWriter, r *http.Request) {
 // GetGradeList ...
 func (c Controller) GetGradeList(w http.ResponseWriter, r *http.Request) {
 	log.Info(r.Method, " ", r.URL.Path)
+
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
 	w.Header().Set("Content-Type", "application/json")
