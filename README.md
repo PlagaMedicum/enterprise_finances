@@ -1,4 +1,5 @@
 # Black Mesa Financial Systems — Enterprise finances app
+[![Go Report Card](https://goreportcard.com/badge/github.com/PlagaMedicum/enterprise_finances)](https://goreportcard.com/report/github.com/PlagaMedicum/enterprise_finances)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/PlagaMedicum/ostis-syntax.vim/blob/master/LICENSE)
 ### Technologies
 #### Frontend
