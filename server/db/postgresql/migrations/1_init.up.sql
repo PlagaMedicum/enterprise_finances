@@ -32,19 +32,15 @@ create table if not exists grades
 
 -- Data migrations goes here:
 
-insert into employees
-values (1, 'Johny', 'Osterbeiter', true);
-insert into employees
-values (2, 'Pen', 'Pen', false);
+insert into employees (name, position, tu_membership)
+values ('Johny', 'Osterbeiter', true),
+       ('Pen', 'Pen', false);
 insert into employees_grades
-values (1, 1);
-insert into employees_grades
-values (2, 2);
+values (1, 1),
+       (2, 2);
 insert into minimal_salaries
-values ('01.02.1999', 1023);
-insert into minimal_salaries
-values ('4.05.2017', 7);
-insert into grades
-values (1, 1, '01.02.1999', 2);
-insert into grades
-values (2, 3, '27.01.2049', 5);
+values ('01.02.1999', 1023),
+       ('4.05.2017', 7);
+insert into grades (num, date, coeff)
+values (1, '01.02.1999', 2),
+       (3, '27.01.2049', 5);

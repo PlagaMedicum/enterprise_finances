@@ -40,6 +40,8 @@ func (c Controller) AddEmployee(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.WriteHeader(http.StatusCreated)
+
 	var e employee.Employee
 	err := json.NewDecoder(r.Body).Decode(&e)
 	if err != nil {
@@ -59,8 +61,6 @@ func (c Controller) AddEmployee(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w, http.StatusInternalServerError)
 		return
 	}
-
-	w.WriteHeader(http.StatusCreated)
 }
 
 // EditEmployee ...
@@ -114,8 +114,6 @@ func (c Controller) DeleteEmployee(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w, http.StatusInternalServerError)
 		return
 	}
-
-	w.WriteHeader(http.StatusOK)
 }
 
 // GetEmployeeList ...

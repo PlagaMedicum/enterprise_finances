@@ -76,7 +76,8 @@ class Employees extends React.Component {
           this.updateTable();
           console.log(resp);
         })
-        .catch(err => console.log(err))
+        .catch(err => console.log(err));
+    this.hide();
   }
 
   deleteElement(id) {
