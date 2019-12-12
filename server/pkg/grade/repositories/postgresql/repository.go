@@ -96,3 +96,17 @@ func (c Controller) GetGradeList(ctx context.Context) ([]grade.Grade, error) { /
 
 	return gList, nil
 }
+
+// GetGrade ...
+func (c Controller) GetGrade(ctx context.Context, id uint64) (grade.Grade, error) {
+	g := grade.Grade{ID: id}
+
+	err := c.DB.DB.QueryRowContext(ctx,
+		`select num, date, coeff from grades where id = $1`,
+		id).Scan(&g.Num, &g.Date, &g.Coefficient)
+	if err != nil {
+		return grade.Grade{}, err
+	}
+
+	return g, nil
+}

@@ -136,8 +136,8 @@ func (c Controller) GetEmployeeList(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// GetEmployeePayments ...
-func (c Controller) GetEmployeePayments(w http.ResponseWriter, r *http.Request) {
+// GetEmployee ...
+func (c Controller) GetEmployee(w http.ResponseWriter, r *http.Request) {
 	log.Info(r.Method, " ", r.URL.Path)
 
 	w.Header().Set("Access-Control-Allow-Origin", "*")

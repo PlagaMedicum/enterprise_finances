@@ -18,6 +18,7 @@ class Grades extends React.Component {
       month: 0,
       year: 0,
       items: [],
+      data: {},
       adding: false,
       editing: false,
       deleting: false,
@@ -41,31 +42,32 @@ class Grades extends React.Component {
         .catch(err => console.log(err));
   }
 
-  showAdd() {
-    // TODO: Showing modal and sending POST http request
-    this.setState({adding: true, editing: false, deleting: false})
-  }
-
-  showEdit(id) {
-    // TODO: Showing modal and sending POST http request
-    this.setState({adding: false, editing: true, deleting: false, id: id})
-  }
-
-  showDelete(id) {
-    this.setState({adding: false, editing: false, deleting: true, id: id})
-  }
-
-  hide() {
-    this.setState({adding: false, editing: false, deleting: false, id: null})
-  }
-
   addElement(data) {
     axios.post(`${this.state.host}/grade/add`, data)
         .then(resp => {
           this.updateTable();
           console.log(resp);
         })
+        .catch(err => console.log(err));
+    this.hide();
+  }
+
+  updateData(id) {
+    axios.get(`${this.state.host}/grade/${id}`)
+        .then(resp => {
+          this.setState({data: resp.data});
+          console.log(resp);
+        })
         .catch(err => console.log(err))
+  }
+
+  editElement(data) {
+    axios.post(`${this.state.host}/grade/${this.state.id}`, data)
+        .then(resp => {
+          this.updateTable();
+          console.log(resp);
+        })
+        .catch(err => console.log(err));
     this.hide();
   }
 
@@ -77,6 +79,23 @@ class Grades extends React.Component {
         })
         .catch(err => console.log(err));
     this.hide();
+  }
+
+  showAdd() {
+    this.setState({adding: true, editing: false, deleting: false})
+  }
+
+  showEdit(id) {
+    this.updateData(id);
+    this.setState({adding: false, editing: true, deleting: false, id: id})
+  }
+
+  showDelete(id) {
+    this.setState({adding: false, editing: false, deleting: true, id: id})
+  }
+
+  hide() {
+    this.setState({adding: false, editing: false, deleting: false, id: null})
   }
 
   render() {
@@ -117,11 +136,12 @@ class Grades extends React.Component {
         <Jumbotron>
           <DatePicker setters={dateSetters}/>
           <Button block variant="success" onClick={() => this.showAdd()}>add</Button>
-          <AddModal show={this.state.adding} hide={() => this.hide()}/>
+          <AddModal show={this.state.adding} hide={() => this.hide()} handler={data => this.addElement(data)}/>
           <p/>
           <ReactTable style={{color: 'black'}} data={data} columns={columns} defaultPageSize={10}
                       pageSizeOptions={[10, 20, 30]}/>
-          <EditModal show={this.state.editing} hide={() => this.hide(this.state.id)}/>
+          <EditModal data={this.state.data} show={this.state.editing} hide={() => this.hide(this.state.id)}
+                     handler={data => this.editElement(data)}/>
           <DeleteModal title="Delete Grade" show={this.state.deleting} hide={() => this.hide()}
                        confirm={() => this.deleteElement(this.state.id)}/>
         </Jumbotron>

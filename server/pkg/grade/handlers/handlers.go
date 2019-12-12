@@ -126,3 +126,27 @@ func (c Controller) GetGradeList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+// GetGrade ...
+func (c Controller) GetGrade(w http.ResponseWriter, r *http.Request) {
+	log.Info(r.Method, " ", r.URL.Path)
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
+	w.Header().Set("Content-Type", "application/json")
+
+	id, err := parseID(r)
+	if err != nil {
+		handleError(err, w, http.StatusBadRequest)
+		return
+	}
+	g, err := c.Usecases.GetGrade(r.Context(), id)
+	if err != nil {
+		handleError(err, w, http.StatusInternalServerError)
+	}
+	err = json.NewEncoder(w).Encode(g)
+	if err != nil {
+		handleError(errors.Errorf("Error encoding json: %s", err), w, http.StatusInternalServerError)
+		return
+	}
+}

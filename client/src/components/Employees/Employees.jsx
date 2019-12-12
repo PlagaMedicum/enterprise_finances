@@ -14,7 +14,6 @@ class Employees extends React.Component {
 
   // TODO:
   // 2. Add edit window with a PUT request inside
-  // 4. Add addition window with a POST request inside
   // 5. Add GET request for specific date
   // 6. Add window of employee payments by dates
 
@@ -26,6 +25,7 @@ class Employees extends React.Component {
       month: 0,
       year: 0,
       items: [],
+      data: {},
       adding: false,
       viewing: false,
       editing: false,
@@ -50,24 +50,23 @@ class Employees extends React.Component {
         .catch(err => console.log(err))
   }
 
-  showAdd() {
-    this.setState({adding: true, viewing: false, editing: false, deleting: false})
+  updateData(id) {
+    axios.get(`${this.state.host}/employee/${id}`)
+        .then(resp => {
+          this.setState({data: resp.data});
+          console.log(resp);
+        })
+        .catch(err => console.log(err))
   }
 
-  showView(id) {
-    this.setState({adding: false, viewing: true, editing: false, deleting: false, id: id})
-  }
-
-  showEdit(id) {
-    this.setState({adding: false, viewing: false, editing: true, deleting: false, id: id})
-  }
-
-  showDelete(id) {
-    this.setState({adding: false, viewing: false, editing: false, deleting: true, id: id})
-  }
-
-  hide() {
-    this.setState({adding: false, viewing: false, editing: false, deleting: false, id: null})
+  editElement(data) {
+    axios.post(`${this.state.host}/employee/${this.state.id}`, data)
+        .then(resp => {
+          this.updateTable();
+          console.log(resp);
+        })
+        .catch(err => console.log(err));
+    this.hide();
   }
 
   addElement(data) {
@@ -90,9 +89,31 @@ class Employees extends React.Component {
     this.hide();
   }
 
+  showAdd() {
+    this.setState({adding: true, viewing: false, editing: false, deleting: false})
+  }
+
+  showView(id) {
+    this.updateData(id);
+    this.setState({adding: false, viewing: true, editing: false, deleting: false, id: id});
+  }
+
+  showEdit(id) {
+    this.updateData(id);
+    this.setState({adding: false, viewing: false, editing: true, deleting: false, id: id})
+  }
+
+  showDelete(id) {
+    this.setState({adding: false, viewing: false, editing: false, deleting: true, id: id})
+  }
+
+  hide() {
+    this.setState({adding: false, viewing: false, editing: false, deleting: false, id: null})
+  }
+
   render() {
     const data = this.state.items;
-    const columns = [{
+    const columns = [{ // TODO: date
       Header: 'id',
       accessor: 'id'
     }, {
@@ -138,8 +159,9 @@ class Employees extends React.Component {
           <p/>
           <ReactTable style={{color: 'black'}} data={data} columns={columns} defaultPageSize={10}
                       pageSizeOptions={[10, 20, 30]}/>
-          <ViewModal id={this.state.id} show={this.state.viewing} hide={() => this.hide()}/>
-          <EditModal show={this.state.editing} hide={() => this.hide()}/>
+          <ViewModal data={this.state.data} show={this.state.viewing} hide={() => this.hide()}/>
+          <EditModal data={this.state.data} show={this.state.editing} hide={() => this.hide()}
+                     handler={data => this.editElement(data)}/>
           <DeleteModal title="Delete Employee" show={this.state.deleting} hide={() => this.hide()}
                        confirm={() => this.deleteElement(this.state.id)}/>
         </Jumbotron>

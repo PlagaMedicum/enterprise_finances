@@ -27,8 +27,14 @@ func (c Controller) DeleteInfo(ctx context.Context, id uint64) error {
 	return err
 }
 
-// GetGradeList
+// GetGradeList ...
 func (c Controller) GetGradeList(ctx context.Context) ([]grade.Grade, error) {
 	glist, err := c.Repository.GetGradeList(ctx)
 	return glist, err
+}
+
+// GetGrade ...
+func (c Controller) GetGrade(ctx context.Context, id uint64) (grade.Grade, error) {
+	g, err := c.Repository.GetGrade(ctx, id)
+	return g, err
 }

@@ -13,9 +13,12 @@ function ViewModal(props) {
           <Modal.Title>View Employee</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <b>#{props.id}</b><br/>
-          <b>Name:</b> {}<br/>
-          <b>Position:</b> {}
+          <b>#{props.data["id"]}</b><br/>
+          <b>Name:</b> {props.data["name"]}<br/>
+          <b>Position:</b> {props.data["position"]}<br/>
+          <b>Grade:</b> {props.data["grade"]}<br/>
+          <b>{props.data["tu-membership"] ? "Is" : "Is not"} Trade Union member</b><br/>
+          {/*TODO: Salary*/}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="danger" onClick={props.hide}>Close</Button>
