@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/PlagaMedicum/enterprise_finances/server/pkg/database/postgresql"
 	grade "github.com/PlagaMedicum/enterprise_finances/server/pkg/grade/domain"
+	"time"
 )
 
 type Controller struct {
@@ -55,7 +56,7 @@ func (c Controller) UpdateInfo(ctx context.Context, g grade.Grade) error {
 }
 
 // DeleteInfo ...
-func (c Controller) DeleteInfo(ctx context.Context, id uint64) error { // TODO: Delete by the date
+func (c Controller) DeleteInfo(ctx context.Context, id uint64) error {
 	tx, err := c.DB.DB.BeginTxx(ctx, nil)
 	if err != nil {
 		return err
@@ -77,9 +78,10 @@ func (c Controller) DeleteInfo(ctx context.Context, id uint64) error { // TODO: 
 }
 
 // GetGradeList ...
-func (c Controller) GetGradeList(ctx context.Context) ([]grade.Grade, error) { // TODO: specify the date
+func (c Controller) GetGradeList(ctx context.Context, d time.Time) ([]grade.Grade, error) {
 	rows, err := c.DB.DB.QueryContext(ctx,
-		`select id, num, date, coeff from grades`)
+		`select id, num, date, coeff from grades where date >= $1`,
+		d)
 	if err != nil {
 		return nil, err
 	}
@@ -87,10 +89,12 @@ func (c Controller) GetGradeList(ctx context.Context) ([]grade.Grade, error) { /
 	var gList []grade.Grade
 	for rows.Next() {
 		g := grade.Grade{}
+
 		err = rows.Scan(&g.ID, &g.Num, &g.Date, &g.Coefficient)
 		if err != nil {
 			return nil, err
 		}
+
 		gList = append(gList, g)
 	}
 

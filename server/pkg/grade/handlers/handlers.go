@@ -8,6 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type Controller struct {
@@ -46,6 +47,7 @@ func (c Controller) AddInfo(w http.ResponseWriter, r *http.Request) {
 		handleError(errors.Errorf("Error decoding json: %s", err), w, http.StatusInternalServerError)
 		return
 	}
+
 	err = c.Usecases.AddInfo(r.Context(), g)
 	if err != nil {
 		handleError(err, w, http.StatusInternalServerError)
@@ -72,11 +74,13 @@ func (c Controller) EditInfo(w http.ResponseWriter, r *http.Request) {
 		handleError(errors.Errorf("Error decoding json: %s", err), w, http.StatusInternalServerError)
 		return
 	}
+
 	g.ID, err = parseID(r)
 	if err != nil {
 		handleError(err, w, http.StatusBadRequest)
 		return
 	}
+
 	err = c.Usecases.EditInfo(r.Context(), g)
 	if err != nil {
 		handleError(err, w, http.StatusInternalServerError)
@@ -101,6 +105,7 @@ func (c Controller) DeleteInfo(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w, http.StatusBadRequest)
 		return
 	}
+
 	err = c.Usecases.DeleteInfo(r.Context(), id)
 	if err != nil {
 		handleError(err, w, http.StatusInternalServerError)
@@ -116,10 +121,17 @@ func (c Controller) GetGradeList(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
 	w.Header().Set("Content-Type", "application/json")
 
-	glist, err := c.Usecases.GetGradeList(r.Context())
+	var d time.Time
+	err := d.UnmarshalText([]byte(r.URL.Query().Get("date")))
 	if err != nil {
 		handleError(err, w, http.StatusInternalServerError)
 	}
+
+	glist, err := c.Usecases.GetGradeList(r.Context(), d)
+	if err != nil {
+		handleError(err, w, http.StatusInternalServerError)
+	}
+
 	err = json.NewEncoder(w).Encode(glist)
 	if err != nil {
 		handleError(errors.Errorf("Error encoding json: %s", err), w, http.StatusInternalServerError)
@@ -140,10 +152,12 @@ func (c Controller) GetGrade(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w, http.StatusBadRequest)
 		return
 	}
+
 	g, err := c.Usecases.GetGrade(r.Context(), id)
 	if err != nil {
 		handleError(err, w, http.StatusInternalServerError)
 	}
+
 	err = json.NewEncoder(w).Encode(g)
 	if err != nil {
 		handleError(errors.Errorf("Error encoding json: %s", err), w, http.StatusInternalServerError)

@@ -3,22 +3,23 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import DatePicker from "../../DatePicker/DatePicker";
+import timeConverter from "../../../timeConverter"
 
 function AddModal(props) {
   const style = {
     color: "black"
   };
 
-  const [num, setNum] = useState(0);
-  const [day, setDay] = useState(0);
-  const [month, setMonth] = useState(0);
-  const [year, setYear] = useState(0);
-  const [coeff, setCoeff] = useState(0);
+  const [num, setNum] = useState(1);
+  const [day, setDay] = useState(1);
+  const [month, setMonth] = useState(1);
+  const [year, setYear] = useState(1);
+  const [coeff, setCoeff] = useState(1);
 
   const data = {
     'num': Number(num),
-    'date': `${day}.${month}.${year}`,
-    'coeff': Number(coeff)
+    'date': timeConverter(day, month, year),
+    'coeff': Number(coeff),
   };
 
   return (

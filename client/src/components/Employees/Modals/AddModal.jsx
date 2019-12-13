@@ -17,7 +17,7 @@ function AddModal(props) {
     'name': name,
     'position': position,
     'grade': Number(grade),
-    'tu-membership': tum
+    'tu-membership': tum,
   };
 
   return (
@@ -39,7 +39,7 @@ function AddModal(props) {
             <Form.Control placeholder="grade" onChange={e => setGrade(e.target.value)}/>
           </Form.Group>
           <Form.Group controlId="fromTum">
-            <Form.Check type="checkbox" label="Trade Union Membership" onChange={e => setTum(!tum)}/>
+            <Form.Check type="checkbox" label="Trade Union Membership" onChange={() => setTum(!tum)}/>
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>

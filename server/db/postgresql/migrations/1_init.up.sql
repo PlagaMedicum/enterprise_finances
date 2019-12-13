@@ -9,38 +9,41 @@ create table if not exists employees
 
 create table if not exists employees_grades
 (
-    e_id serial
+    e_id int
         constraint eg_pk primary key,
-    g_id serial not null
+    g_id int not null
 );
 
 create table if not exists minimal_salaries
 (
-    date  text
+    date  date
         constraint ms_pk primary key,
-    value serial not null
+    value int not null
 );
 
 create table if not exists grades
 (
     id    serial
         constraint grade_pk primary key,
-    num   serial not null, -- order number of a grade.
-    date  text   not null,
-    coeff serial not null
+    num   int  not null, -- order number of a grade.
+    date  date not null,
+    coeff int  not null
 );
 
 -- Data migrations goes here:
 
 insert into employees (name, position, tu_membership)
-values ('Johny', 'Osterbeiter', true),
-       ('Pen', 'Pen', false);
+values ('Daniil Dankovskij', 'Bachelor', true),
+       ('Haruspex', 'Medic', false),
+       ('Gordon Freeman', 'Physician', false);
 insert into employees_grades
 values (1, 1),
-       (2, 2);
+       (2, 2),
+       (3, 3);
 insert into minimal_salaries
-values ('01.02.1999', 1023),
-       ('4.05.2017', 7);
+values ('02/01/1999', 1023),
+       ('05/04/2017', 7);
 insert into grades (num, date, coeff)
-values (1, '01.02.1999', 2),
-       (3, '27.01.2049', 5);
+values (5, '02/01/1999', 2),
+       (7, '01/27/2047', 5),
+       (10, '01/05/1980', 9);

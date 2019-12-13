@@ -5,7 +5,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 function DatePicker(props) {
   return (
       <InputGroup>
-        <FormControl placeholder="day" onChange={e => props.setters.setDay(e.target.value)}/>
+        <FormControl placeholder="day" onChange={e => props.setters.setDay(e.target.value)} defaultValue={1}/>
         <select className="custom-select" onChange={e => props.setters.setMonth(e.target.value)}>
           <option value="1">jan</option>
           <option value="2">feb</option>
@@ -20,8 +20,8 @@ function DatePicker(props) {
           <option value="11">nov</option>
           <option value="12">dec</option>
         </select>
-        <FormControl placeholder="year" onChange={e => props.setters.setYear(e.target.value)}/>
-        </InputGroup>
+        <FormControl placeholder="year" onChange={e => props.setters.setYear(e.target.value)} defaultValue={1}/>
+      </InputGroup>
     );
 }
 

@@ -14,13 +14,12 @@ function EditModal(props) {
   const [tum, setTum] = useState(false);
 
   const data = {
+    'id': props.data["id"],
     'name': name,
     'position': position,
     'grade': Number(grade),
-    'tu-membership': tum
+    'tu-membership': tum,
   };
-
-  // FIXME: Bug with updating default value after showing up
 
   return (
       <Modal style={style} show={props.show} onHide={props.hide}>
@@ -43,7 +42,7 @@ function EditModal(props) {
                           defaultValue={props.data["grade"]}/>
           </Form.Group>
           <Form.Group controlId="fromTum">
-            <Form.Check type="checkbox" label="Trade Union Membership" onChange={e => setTum(!tum)}
+            <Form.Check type="checkbox" label="Trade Union Membership" onChange={() => setTum(!tum)}
                         defaultValue={props.data["tu-membership"]}/>
           </Form.Group>
         </Modal.Body>

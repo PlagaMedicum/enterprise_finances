@@ -7,7 +7,7 @@ class ErrorBoundary extends React.Component {
     super(props);
     this.state = {
       error: null,
-      errorInfo: null
+      errorInfo: null,
     };
   }
 
@@ -20,8 +20,7 @@ class ErrorBoundary extends React.Component {
       return (
           <Alert variant='danger'>
             <Alert.Heading>Error</Alert.Heading>
-            {this.state.error && this.state.error.toString()}
-            <br/>
+            {this.state.error && this.state.error.toString()}<br/>
             {this.state.errorInfo.componentStack}
           </Alert>
       );

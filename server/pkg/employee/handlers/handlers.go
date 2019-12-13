@@ -8,6 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type Controller struct {
@@ -48,14 +49,17 @@ func (c Controller) AddEmployee(w http.ResponseWriter, r *http.Request) {
 		handleError(errors.Errorf("Error decoding json: %s", err), w, http.StatusBadRequest)
 		return
 	}
+
 	e.ID, err = c.Usecases.AddEmployee(r.Context(), e)
 	if err != nil {
 		handleError(err, w, http.StatusInternalServerError)
 		return
 	}
+
 	resp := struct {
 		ID uint64 `json:"id"`
 	}{ID: e.ID}
+
 	err = json.NewEncoder(w).Encode(resp)
 	if err != nil {
 		handleError(err, w, http.StatusInternalServerError)
@@ -80,11 +84,13 @@ func (c Controller) EditEmployee(w http.ResponseWriter, r *http.Request) {
 		handleError(errors.Errorf("Error decoding json: %s", err), w, http.StatusBadRequest)
 		return
 	}
+
 	e.ID, err = parseID(r)
 	if err != nil {
 		handleError(err, w, http.StatusBadRequest)
 		return
 	}
+
 	err = c.Usecases.EditEmployee(r.Context(), e)
 	if err != nil {
 		handleError(err, w, http.StatusInternalServerError)
@@ -109,6 +115,7 @@ func (c Controller) DeleteEmployee(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w, http.StatusBadRequest)
 		return
 	}
+
 	err = c.Usecases.DeleteEmployee(r.Context(), id)
 	if err != nil {
 		handleError(err, w, http.StatusInternalServerError)
@@ -124,11 +131,18 @@ func (c Controller) GetEmployeeList(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
 	w.Header().Set("Content-Type", "application/json")
 
-	elist, err := c.Usecases.GetEmployeeList(r.Context())
+	var d time.Time
+	err := d.UnmarshalText([]byte(r.URL.Query().Get("date")))
+	if err != nil {
+		handleError(err, w, http.StatusInternalServerError)
+	}
+
+	elist, err := c.Usecases.GetEmployeeList(r.Context(), d)
 	if err != nil {
 		handleError(err, w, http.StatusInternalServerError)
 		return
 	}
+
 	err = json.NewEncoder(w).Encode(elist)
 	if err != nil {
 		handleError(errors.Errorf("Error encoding json: %s", err), w, http.StatusInternalServerError)
@@ -149,12 +163,47 @@ func (c Controller) GetEmployee(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w, http.StatusBadRequest)
 		return
 	}
+
 	e, err := c.Usecases.GetEmployee(r.Context(), id)
 	if err != nil {
 		handleError(err, w, http.StatusInternalServerError)
 		return
 	}
+
 	err = json.NewEncoder(w).Encode(e)
+	if err != nil {
+		handleError(errors.Errorf("Error encoding json: %s", err), w, http.StatusInternalServerError)
+		return
+	}
+}
+
+// GetEmployeePayments ...
+func (c Controller) GetEmployeePayments(w http.ResponseWriter, r *http.Request) {
+	log.Info(r.Method, " ", r.URL.Path)
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
+	w.Header().Set("Content-Type", "application/json")
+
+	id, err := parseID(r)
+	if err != nil {
+		handleError(err, w, http.StatusBadRequest)
+		return
+	}
+
+	var d time.Time
+	err = d.UnmarshalText([]byte(r.URL.Query().Get("date")))
+	if err != nil {
+		handleError(err, w, http.StatusInternalServerError)
+	}
+
+	elist, err := c.Usecases.GetEmployeePayments(r.Context(), id, d)
+	if err != nil {
+		handleError(err, w, http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(elist)
 	if err != nil {
 		handleError(errors.Errorf("Error encoding json: %s", err), w, http.StatusInternalServerError)
 		return

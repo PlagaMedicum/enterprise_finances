@@ -3,6 +3,7 @@ package usecases
 import (
 	"context"
 	grade "github.com/PlagaMedicum/enterprise_finances/server/pkg/grade/domain"
+	"time"
 )
 
 type Controller struct {
@@ -28,8 +29,8 @@ func (c Controller) DeleteInfo(ctx context.Context, id uint64) error {
 }
 
 // GetGradeList ...
-func (c Controller) GetGradeList(ctx context.Context) ([]grade.Grade, error) {
-	glist, err := c.Repository.GetGradeList(ctx)
+func (c Controller) GetGradeList(ctx context.Context, d time.Time) ([]grade.Grade, error) {
+	glist, err := c.Repository.GetGradeList(ctx, d)
 	return glist, err
 }
 

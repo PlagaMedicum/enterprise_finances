@@ -3,6 +3,7 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import DatePicker from "../../DatePicker/DatePicker";
+import timeConverter from "../../../timeConverter";
 
 function EditModal(props) {
   const style = {
@@ -10,18 +11,17 @@ function EditModal(props) {
   };
 
   const [num, setNum] = useState(0);
-  const [day, setDay] = useState(0);
-  const [month, setMonth] = useState(0);
-  const [year, setYear] = useState(0);
+  const [day, setDay] = useState(1);
+  const [month, setMonth] = useState(1);
+  const [year, setYear] = useState(1);
   const [coeff, setCoeff] = useState(0);
 
   const data = {
+    'id': props.data["id"],
     'num': Number(num),
-    'date': `${day}.${month}.${year}`,
-    'coeff': Number(coeff)
+    'date': timeConverter(day, month, year),
+    'coeff': Number(coeff),
   };
-
-  // FIXME: Bug with updating default value after showing up
 
   return (
       <Modal style={style} show={props.show} onHide={props.hide}>

@@ -47,6 +47,7 @@ func main() {
 	r.HandleFunc("/employee/{id}/delete", eh.DeleteEmployee).Methods(http.MethodDelete, http.MethodOptions)
 	r.HandleFunc("/employee", eh.GetEmployeeList).Methods(http.MethodGet)
 	r.HandleFunc("/employee/{id}", eh.GetEmployee).Methods(http.MethodGet)
+	r.HandleFunc("/employee/{id}/payments", eh.GetEmployeePayments).Methods(http.MethodGet)
 	r.HandleFunc("/grade/add", gh.AddInfo).Methods(http.MethodPost, http.MethodOptions)
 	r.HandleFunc("/grade/{id}", gh.EditInfo).Methods(http.MethodPost, http.MethodOptions)
 	r.HandleFunc("/grade/{id}/delete", gh.DeleteInfo).Methods(http.MethodDelete, http.MethodOptions)

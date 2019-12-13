@@ -3,7 +3,7 @@ package usecases
 import (
 	"context"
 	employee "github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/domain"
-	"sync"
+	"time"
 )
 
 type Controller struct {
@@ -29,20 +29,8 @@ func (c Controller) DeleteEmployee(ctx context.Context, id uint64) error {
 }
 
 // GetEmployeeList ...
-func (c Controller) GetEmployeeList(ctx context.Context) ([]employee.Employee, error) {
-	elist, err := c.Repository.GetEmployeeList(ctx)
-
-	var w sync.WaitGroup
-	for i := range elist { // TODO: Create Salary calculation logic
-		elist[i].Salary = make(map[string]uint64)
-		w.Add(1)
-		go func(e *employee.Employee, w *sync.WaitGroup, i int) {
-			e.Salary["sas"] = uint64(i)
-			w.Done()
-		}(&elist[i], &w, i)
-	}
-
-	w.Wait()
+func (c Controller) GetEmployeeList(ctx context.Context, d time.Time) ([]employee.Employee, error) {
+	elist, err := c.Repository.GetEmployeeList(ctx, d)
 	return elist, err
 }
 
@@ -50,4 +38,10 @@ func (c Controller) GetEmployeeList(ctx context.Context) ([]employee.Employee, e
 func (c Controller) GetEmployee(ctx context.Context, id uint64) (employee.Employee, error) {
 	e, err := c.Repository.GetEmployee(ctx, id)
 	return e, err
+}
+
+// GetEmployeePayments ...
+func (c Controller) GetEmployeePayments(ctx context.Context, id uint64, d time.Time) ([]employee.Employee, error) {
+	elist, err := c.Repository.GetEmployeePayments(ctx, id, d)
+	return elist, err
 }
