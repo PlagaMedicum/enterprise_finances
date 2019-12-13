@@ -1,4 +1,4 @@
-module github.com/PlagaMedicum/enterprise_finances
+module github.com/PlagaMedicum/enterprise_finances/server
 
 go 1.12
 
