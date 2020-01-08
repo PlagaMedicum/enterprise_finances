@@ -13,6 +13,21 @@ import (
 	"net/http"
 )
 
+func httpMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r * http.Request) {
+		log.Info(r.Method, " ", r.URL.Path)
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
+		w.Header().Set("Content-Type", "application/json")
+		if r.Method == http.MethodOptions {
+        	return
+		}
+
+		next(w, r)
+	}
+}
+
 func main() {
 	db := psql.DB{
 		User:         "postgres",
@@ -41,18 +56,19 @@ func main() {
 		},
 	}
 
+	mw := httpMiddleware
 	r := mux.NewRouter()
-	r.HandleFunc("/employee/add", eh.AddEmployee).Methods(http.MethodPost, http.MethodOptions)
-	r.HandleFunc("/employee/{id}", eh.EditEmployee).Methods(http.MethodPost, http.MethodOptions)
-	r.HandleFunc("/employee/{id}/delete", eh.DeleteEmployee).Methods(http.MethodDelete, http.MethodOptions)
-	r.HandleFunc("/employee", eh.GetEmployeeList).Methods(http.MethodGet)
-	r.HandleFunc("/employee/{id}", eh.GetEmployee).Methods(http.MethodGet)
-	r.HandleFunc("/employee/{id}/payments", eh.GetEmployeePayments).Methods(http.MethodGet)
-	r.HandleFunc("/grade/add", gh.AddInfo).Methods(http.MethodPost, http.MethodOptions)
-	r.HandleFunc("/grade/{id}", gh.EditInfo).Methods(http.MethodPost, http.MethodOptions)
-	r.HandleFunc("/grade/{id}/delete", gh.DeleteInfo).Methods(http.MethodDelete, http.MethodOptions)
-	r.HandleFunc("/grade", gh.GetGradeList).Methods(http.MethodGet)
-	r.HandleFunc("/grade/{id}", gh.GetGrade).Methods(http.MethodGet)
+	r.HandleFunc("/employee/add", mw(eh.AddEmployee)).Methods(http.MethodPost, http.MethodOptions)
+	r.HandleFunc("/employee/{id}", mw(eh.EditEmployee)).Methods(http.MethodPost, http.MethodOptions)
+	r.HandleFunc("/employee/{id}/delete", mw(eh.DeleteEmployee)).Methods(http.MethodDelete, http.MethodOptions)
+	r.HandleFunc("/employee", mw(eh.GetEmployeeList)).Methods(http.MethodGet)
+	r.HandleFunc("/employee/{id}", mw(eh.GetEmployee)).Methods(http.MethodGet)
+	r.HandleFunc("/employee/{id}/payments", mw(eh.GetEmployeePayments)).Methods(http.MethodGet)
+	r.HandleFunc("/grade/add", mw(gh.AddInfo)).Methods(http.MethodPost, http.MethodOptions)
+	r.HandleFunc("/grade/{id}", mw(gh.EditInfo)).Methods(http.MethodPost, http.MethodOptions)
+	r.HandleFunc("/grade/{id}/delete", mw(gh.DeleteInfo)).Methods(http.MethodDelete, http.MethodOptions)
+	r.HandleFunc("/grade", mw(gh.GetGradeList)).Methods(http.MethodGet)
+	r.HandleFunc("/grade/{id}", mw(gh.GetGrade)).Methods(http.MethodGet)
 	http.Handle("/", r)
 	s := http.Server{
 		Addr:    ":1540",

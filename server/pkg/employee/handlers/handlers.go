@@ -32,15 +32,6 @@ func parseID(r *http.Request) (uint64, error) {
 
 // AddEmployee ...
 func (c Controller) AddEmployee(w http.ResponseWriter, r *http.Request) {
-	log.Info(r.Method, " ", r.URL.Path)
-
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
-	w.Header().Set("Content-Type", "application/json")
-	if r.Method == http.MethodOptions {
-		return
-	}
-
 	w.WriteHeader(http.StatusCreated)
 
 	var e employee.Employee
@@ -69,15 +60,6 @@ func (c Controller) AddEmployee(w http.ResponseWriter, r *http.Request) {
 
 // EditEmployee ...
 func (c Controller) EditEmployee(w http.ResponseWriter, r *http.Request) {
-	log.Info(r.Method, " ", r.URL.Path)
-
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
-	w.Header().Set("Content-Type", "application/json")
-	if r.Method == http.MethodOptions {
-		return
-	}
-
 	var e employee.Employee
 	err := json.NewDecoder(r.Body).Decode(&e)
 	if err != nil {
@@ -100,16 +82,6 @@ func (c Controller) EditEmployee(w http.ResponseWriter, r *http.Request) {
 
 // DeleteEmployee ...
 func (c Controller) DeleteEmployee(w http.ResponseWriter, r *http.Request) {
-	log.Info(r.Method, " ", r.URL.Path)
-
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "DELETE, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
-	w.Header().Set("Content-Type", "application/json")
-	if r.Method == http.MethodOptions {
-		return
-	}
-
 	id, err := parseID(r)
 	if err != nil {
 		handleError(err, w, http.StatusBadRequest)
@@ -125,12 +97,6 @@ func (c Controller) DeleteEmployee(w http.ResponseWriter, r *http.Request) {
 
 // GetEmployeeList ...
 func (c Controller) GetEmployeeList(w http.ResponseWriter, r *http.Request) {
-	log.Info(r.Method, " ", r.URL.Path)
-
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
-	w.Header().Set("Content-Type", "application/json")
-
 	var d time.Time
 	err := d.UnmarshalText([]byte(r.URL.Query().Get("date")))
 	if err != nil {
@@ -152,12 +118,6 @@ func (c Controller) GetEmployeeList(w http.ResponseWriter, r *http.Request) {
 
 // GetEmployee ...
 func (c Controller) GetEmployee(w http.ResponseWriter, r *http.Request) {
-	log.Info(r.Method, " ", r.URL.Path)
-
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
-	w.Header().Set("Content-Type", "application/json")
-
 	id, err := parseID(r)
 	if err != nil {
 		handleError(err, w, http.StatusBadRequest)
@@ -179,12 +139,6 @@ func (c Controller) GetEmployee(w http.ResponseWriter, r *http.Request) {
 
 // GetEmployeePayments ...
 func (c Controller) GetEmployeePayments(w http.ResponseWriter, r *http.Request) {
-	log.Info(r.Method, " ", r.URL.Path)
-
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
-	w.Header().Set("Content-Type", "application/json")
-
 	id, err := parseID(r)
 	if err != nil {
 		handleError(err, w, http.StatusBadRequest)

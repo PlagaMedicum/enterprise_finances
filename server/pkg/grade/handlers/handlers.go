@@ -32,14 +32,7 @@ func parseID(r *http.Request) (uint64, error) {
 
 // AddInfo ...
 func (c Controller) AddInfo(w http.ResponseWriter, r *http.Request) {
-	log.Info(r.Method, " ", r.URL.Path)
-
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
-	w.Header().Set("Content-Type", "application/json")
-	if r.Method == http.MethodOptions {
-		return
-	}
+	w.WriteHeader(http.StatusCreated)
 
 	g := grade.Grade{}
 	err := json.NewDecoder(r.Body).Decode(&g)
@@ -53,21 +46,10 @@ func (c Controller) AddInfo(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w, http.StatusInternalServerError)
 		return
 	}
-
-	w.WriteHeader(http.StatusCreated)
 }
 
 // EditInfo ...
 func (c Controller) EditInfo(w http.ResponseWriter, r *http.Request) {
-	log.Info(r.Method, " ", r.URL.Path)
-
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
-	w.Header().Set("Content-Type", "application/json")
-	if r.Method == http.MethodOptions {
-		return
-	}
-
 	g := grade.Grade{}
 	err := json.NewDecoder(r.Body).Decode(&g)
 	if err != nil {
@@ -90,16 +72,6 @@ func (c Controller) EditInfo(w http.ResponseWriter, r *http.Request) {
 
 // DeleteInfo ...
 func (c Controller) DeleteInfo(w http.ResponseWriter, r *http.Request) {
-	log.Info(r.Method, " ", r.URL.Path)
-
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "DELETE, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
-	w.Header().Set("Content-Type", "application/json")
-	if r.Method == http.MethodOptions {
-		return
-	}
-
 	id, err := parseID(r)
 	if err != nil {
 		handleError(err, w, http.StatusBadRequest)
@@ -115,12 +87,6 @@ func (c Controller) DeleteInfo(w http.ResponseWriter, r *http.Request) {
 
 // GetGradeList ...
 func (c Controller) GetGradeList(w http.ResponseWriter, r *http.Request) {
-	log.Info(r.Method, " ", r.URL.Path)
-
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
-	w.Header().Set("Content-Type", "application/json")
-
 	var d time.Time
 	err := d.UnmarshalText([]byte(r.URL.Query().Get("date")))
 	if err != nil {
@@ -141,12 +107,6 @@ func (c Controller) GetGradeList(w http.ResponseWriter, r *http.Request) {
 
 // GetGrade ...
 func (c Controller) GetGrade(w http.ResponseWriter, r *http.Request) {
-	log.Info(r.Method, " ", r.URL.Path)
-
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
-	w.Header().Set("Content-Type", "application/json")
-
 	id, err := parseID(r)
 	if err != nil {
 		handleError(err, w, http.StatusBadRequest)
