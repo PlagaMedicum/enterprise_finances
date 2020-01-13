@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package api;
+
+service Employees {
+    rpc AddEmployee(Employee) returns (uint64);
+    rpc EditEmployee(Employee) returns (google.protobuf.Empty);
+    rpc DeleteEmployee(uint64) returns (google.protobuf.Empty);
+    rpc GetEmployeeList(string) returns (stream Employee);
+    rpc GetEmployee(uint64) returns (Employee);
+    rpc GetEmployeePayments(IDTime) returns (stream Employee);
+}
+
+message Employee {
+    uint64 id =1;
+    string date = 2;
+    string name = 3;
+    string position = 4;
+    uint64 grade = 5;
+    bool tu_membership = 6;
+    double salary = 7;
+    double accruals = 8;
+    double deduction = 9;
+}
+
+message IDTime {
+    uint64 id = 1;
+    string date = 2;
+}

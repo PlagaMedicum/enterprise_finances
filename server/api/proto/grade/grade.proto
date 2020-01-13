@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package api;
+
+service Grades {
+    rpc AddInfo(Grade) returns (google.protobuf.Empty);
+    rpc EditInfo(Grade) returns (google.protobuf.Empty);
+    rpc DeleteInfo(uint64) returns (google.protobuf.Empty);
+    rpc GetGradeList(string) returns (stream Grade);
+    rpc GetGrade(string) returns (Grade);
+}
+
+message Grade {
+    uint64 id = 1;
+    uint64 num = 2;
+    string date = 3;
+    int32 coeff = 4;
+}

@@ -13,13 +13,20 @@ import (
 	"net/http"
 )
 
+var httpHeaders = map[string]string {
+	"Access-Control-Allow-Origin": "*",
+	"Access-Control-Allow-Headers": "access-control-allow-origin, content-type",
+	"Content-Type": "application/json",
+}
+
 func httpMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r * http.Request) {
 		log.Info(r.Method, " ", r.URL.Path)
 
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Headers", "access-control-allow-origin, content-type")
-		w.Header().Set("Content-Type", "application/json")
+		for k, v := range httpHeaders {
+			w.Header().Set(k, v)
+		}
+
 		if r.Method == http.MethodOptions {
         	return
 		}
@@ -70,11 +77,13 @@ func main() {
 	r.HandleFunc("/grade", mw(gh.GetGradeList)).Methods(http.MethodGet)
 	r.HandleFunc("/grade/{id}", mw(gh.GetGrade)).Methods(http.MethodGet)
 	http.Handle("/", r)
+
 	s := http.Server{
 		Addr:    ":1540",
 		Handler: r,
 	}
 
+	log.Info("Listening to localhost" + s.Addr)
 	err := s.ListenAndServe()
 	if err != nil {
 		log.Fatal("Unexpected http server error: " + err.Error())
