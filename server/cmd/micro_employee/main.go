@@ -1,19 +1,40 @@
-package micro_employee
+package main
 
 import (
-	log "github.com/sirupsen/logrus"
-	"net/http"
+    psql "github.com/PlagaMedicum/enterprise_finances/server/pkg/database/postgresql"
+    "github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/api"
+    handler "github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/handlers/grpc"
+    "github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/repositories/postgresql"
+    "github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/usecases"
+    log "github.com/sirupsen/logrus"
+    "google.golang.org/grpc"
+    "net"
 )
 
 func main() {
-	s := http.Server{
-		Addr:    ":15402",
-		Handler: nil,
-	}
+    db := psql.DB{
+        User:         "postgres",
+        Password:     "postgres",
+        Host:         "localhost",
+        Port:         5432,
+        DatabaseName: "efinances",
+        SSLMode:      "disable",
+    }
+    db.Connect()
+    db.MigrateDown()
+    db.MigrateUp()
 
-	log.Info("Listening to localhost" + s.Addr)
-	err := s.ListenAndServe()
+	s := grpc.NewServer()
+    api.RegisterEmployeesServer(s, &handler.Controller{usecases.Controller{postgresql.Controller{db}}})
+
+	l, err := net.Listen("tcp", ":9000")
 	if err != nil {
-		log.Fatal("Unexpected http server error: " + err.Error())
+	    log.Fatal(err)
+    }
+	log.Info("Listening to localhost:9000")
+
+	err = s.Serve(l)
+	if err != nil {
+		log.Fatal(err)
 	}
 }
