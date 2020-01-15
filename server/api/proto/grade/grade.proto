@@ -7,9 +7,9 @@ package api;
 service Grades {
     rpc AddInfo(Grade) returns (google.protobuf.Empty);
     rpc EditInfo(Grade) returns (google.protobuf.Empty);
-    rpc DeleteInfo(uint64) returns (google.protobuf.Empty);
-    rpc GetGradeList(string) returns (stream Grade);
-    rpc GetGrade(string) returns (Grade);
+    rpc DeleteInfo(ID) returns (google.protobuf.Empty);
+    rpc GetGradeList(Date) returns (stream Grade);
+    rpc GetGrade(ID) returns (Grade);
 }
 
 message Grade {
@@ -17,4 +17,12 @@ message Grade {
     uint64 num = 2;
     string date = 3;
     int32 coeff = 4;
+}
+
+message ID {
+    uint64 id = 1;
+}
+
+message Date {
+    string date = 1;
 }

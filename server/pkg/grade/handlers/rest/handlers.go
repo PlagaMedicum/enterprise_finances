@@ -1,8 +1,9 @@
-package handlers
+package rest
 
 import (
 	"encoding/json"
 	grade "github.com/PlagaMedicum/enterprise_finances/server/pkg/grade/domain"
+	"github.com/PlagaMedicum/enterprise_finances/server/pkg/grade/handlers"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -12,7 +13,7 @@ import (
 )
 
 type Controller struct {
-	Usecases
+	handlers.Usecases
 }
 
 func handleError(err error, w http.ResponseWriter, status int) {
@@ -37,7 +38,7 @@ func (c Controller) AddInfo(w http.ResponseWriter, r *http.Request) {
 	g := grade.Grade{}
 	err := json.NewDecoder(r.Body).Decode(&g)
 	if err != nil {
-		handleError(errors.Errorf("Error decoding json: %s", err), w, http.StatusInternalServerError)
+		handleError(errors.Wrap(err, "Error decoding json"), w, http.StatusInternalServerError)
 		return
 	}
 
@@ -53,7 +54,7 @@ func (c Controller) EditInfo(w http.ResponseWriter, r *http.Request) {
 	g := grade.Grade{}
 	err := json.NewDecoder(r.Body).Decode(&g)
 	if err != nil {
-		handleError(errors.Errorf("Error decoding json: %s", err), w, http.StatusInternalServerError)
+		handleError(errors.Wrap(err,"Error decoding json"), w, http.StatusInternalServerError)
 		return
 	}
 
@@ -100,7 +101,7 @@ func (c Controller) GetGradeList(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewEncoder(w).Encode(glist)
 	if err != nil {
-		handleError(errors.Errorf("Error encoding json: %s", err), w, http.StatusInternalServerError)
+		handleError(errors.Wrap(err, "Error encoding json"), w, http.StatusInternalServerError)
 		return
 	}
 }
@@ -120,7 +121,7 @@ func (c Controller) GetGrade(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewEncoder(w).Encode(g)
 	if err != nil {
-		handleError(errors.Errorf("Error encoding json: %s", err), w, http.StatusInternalServerError)
+		handleError(errors.Wrap(err, "Error encoding json"), w, http.StatusInternalServerError)
 		return
 	}
 }

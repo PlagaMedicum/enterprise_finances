@@ -1,8 +1,9 @@
-package handlers
+package rest
 
 import (
 	"encoding/json"
 	employee "github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/domain"
+	"github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/handlers"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -12,7 +13,7 @@ import (
 )
 
 type Controller struct {
-	Usecases
+	handlers.Usecases
 }
 
 func handleError(err error, w http.ResponseWriter, status int) {
@@ -37,7 +38,7 @@ func (c Controller) AddEmployee(w http.ResponseWriter, r *http.Request) {
 	var e employee.Employee
 	err := json.NewDecoder(r.Body).Decode(&e)
 	if err != nil {
-		handleError(errors.Errorf("Error decoding json: %s", err), w, http.StatusBadRequest)
+		handleError(errors.Wrap(err, "Error decoding json"), w, http.StatusBadRequest)
 		return
 	}
 
@@ -63,7 +64,7 @@ func (c Controller) EditEmployee(w http.ResponseWriter, r *http.Request) {
 	var e employee.Employee
 	err := json.NewDecoder(r.Body).Decode(&e)
 	if err != nil {
-		handleError(errors.Errorf("Error decoding json: %s", err), w, http.StatusBadRequest)
+		handleError(errors.Wrap(err, "Error decoding json"), w, http.StatusBadRequest)
 		return
 	}
 
@@ -111,7 +112,7 @@ func (c Controller) GetEmployeeList(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewEncoder(w).Encode(elist)
 	if err != nil {
-		handleError(errors.Errorf("Error encoding json: %s", err), w, http.StatusInternalServerError)
+		handleError(errors.Wrap(err, "Error encoding json"), w, http.StatusInternalServerError)
 		return
 	}
 }
@@ -132,7 +133,7 @@ func (c Controller) GetEmployee(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewEncoder(w).Encode(e)
 	if err != nil {
-		handleError(errors.Errorf("Error encoding json: %s", err), w, http.StatusInternalServerError)
+		handleError(errors.Wrap(err, "Error encoding json"), w, http.StatusInternalServerError)
 		return
 	}
 }
@@ -159,7 +160,7 @@ func (c Controller) GetEmployeePayments(w http.ResponseWriter, r *http.Request) 
 
 	err = json.NewEncoder(w).Encode(elist)
 	if err != nil {
-		handleError(errors.Errorf("Error encoding json: %s", err), w, http.StatusInternalServerError)
+		handleError(errors.Wrap(err, "Error encoding json"), w, http.StatusInternalServerError)
 		return
 	}
 }

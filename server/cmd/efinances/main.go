@@ -1,16 +1,16 @@
 package main
 
 import (
-	psql "github.com/PlagaMedicum/enterprise_finances/server/pkg/database/postgresql"
-	ehandlers "github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/handlers"
-	erepo "github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/repositories/postgresql"
-	eusecases "github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/usecases"
-	ghandlers "github.com/PlagaMedicum/enterprise_finances/server/pkg/grade/handlers"
-	grepo "github.com/PlagaMedicum/enterprise_finances/server/pkg/grade/repositories/postgresql"
-	gusecases "github.com/PlagaMedicum/enterprise_finances/server/pkg/grade/usecases"
-	"github.com/gorilla/mux"
-	log "github.com/sirupsen/logrus"
-	"net/http"
+    psql "github.com/PlagaMedicum/enterprise_finances/server/pkg/database/postgresql"
+    erest "github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/handlers/rest"
+    erepo "github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/repositories/postgresql"
+    eusecases "github.com/PlagaMedicum/enterprise_finances/server/pkg/employee/usecases"
+    grest "github.com/PlagaMedicum/enterprise_finances/server/pkg/grade/handlers/rest"
+    grepo "github.com/PlagaMedicum/enterprise_finances/server/pkg/grade/repositories/postgresql"
+    gusecases "github.com/PlagaMedicum/enterprise_finances/server/pkg/grade/usecases"
+    "github.com/gorilla/mux"
+    log "github.com/sirupsen/logrus"
+    "net/http"
 )
 
 var httpHeaders = map[string]string {
@@ -48,14 +48,14 @@ func main() {
 	db.MigrateDown()
 	db.MigrateUp()
 
-	eh := ehandlers.Controller{
+	eh := erest.Controller{
 		Usecases: eusecases.Controller{
 			Repository: erepo.Controller{
 				DB: db,
 			},
 		},
 	}
-	gh := ghandlers.Controller{
+	gh := grest.Controller{
 		Usecases: gusecases.Controller{
 			Repository: grepo.Controller{
 				DB: db,
