@@ -8,6 +8,7 @@ import (
     "github.com/golang/protobuf/ptypes/empty"
     "github.com/pkg/errors"
     log "github.com/sirupsen/logrus"
+    "sync"
     "time"
 )
 
@@ -27,13 +28,58 @@ func unmarshalDate(d string) (time.Time, error) {
     return res, nil
 }
 
-func (c Controller) AddEmployee(ctx context.Context, e *api.Employee) (*api.ID, error) {
+func messageToEmployee(e *api.Employee) (domain.Employee, error) {
     d, err := unmarshalDate(e.GetDate())
+    if err != nil {
+        return domain.Employee{}, err
+    }
+
+    return domain.Employee{ID: e.GetId(), Date: d, Name: e.GetName(), Position: e.GetPosition(), Grade: e.GetGrade(), TUMembership: e.GetTuMembership()}, nil
+}
+
+func employeeToMessage(e domain.Employee) *api.Employee {
+    return &api.Employee{Id: e.ID, Date: e.Date.String(), Name: e.Name, Position: e.Position, Grade: e.Grade, TuMembership: e.TUMembership, Salary: e.Salary, Accruals: e.Accruals, Deduction: e.Deduction}
+}
+
+func sendEmployees(elist []domain.Employee, send func(*api.Employee) error) error {
+    errc := make(chan error)
+    waitc := make(chan struct{})
+    wg := sync.WaitGroup{}
+    for _, e := range elist {
+        wg.Add(1)
+        go func(e domain.Employee) {
+            err := send(employeeToMessage(e))
+            if err != nil {
+                err = errors.Wrap(err, "Error sending employee")
+                log.Error(err)
+                errc <- err
+                return
+            }
+            wg.Done()
+        }(e)
+    }
+
+    go func() {
+        wg.Wait()
+        close(waitc)
+    }()
+
+    select {
+    case err := <-errc:
+        return err
+    case <-waitc:
+    }
+
+    return nil
+}
+
+func (c Controller) AddEmployee(ctx context.Context, rq *api.Employee) (*api.ID, error) {
+    e, err := messageToEmployee(rq)
     if err != nil {
         return nil, err
     }
 
-    id, err := c.Usecases.AddEmployee(ctx, domain.Employee{ID: e.GetId(), Date: d, Name: e.GetName(), Position: e.GetPosition(), Grade: e.GetGrade(), TUMembership: e.GetTuMembership()})
+    id, err := c.Usecases.AddEmployee(ctx, e)
     if err != nil {
         err = errors.Wrap(err, "Error adding employee")
         log.Error(err)
@@ -43,13 +89,13 @@ func (c Controller) AddEmployee(ctx context.Context, e *api.Employee) (*api.ID, 
     return &api.ID{Id: id}, nil
 }
 
-func (c Controller) EditEmployee(ctx context.Context, e *api.Employee) (*empty.Empty, error) {
-    d, err := unmarshalDate(e.GetDate())
+func (c Controller) EditEmployee(ctx context.Context, rq *api.Employee) (*empty.Empty, error) {
+    e, err := messageToEmployee(rq)
     if err != nil {
         return nil, err
     }
 
-    err = c.Usecases.EditEmployee(ctx, domain.Employee{ID: e.GetId(), Date: d, Name: e.GetName(), Position: e.GetPosition(), Grade: e.GetGrade(), TUMembership: e.GetTuMembership()})
+    err = c.Usecases.EditEmployee(ctx, e)
     if err != nil {
         err = errors.Wrap(err, "Error editing employee")
         log.Error(err)
@@ -82,13 +128,10 @@ func (c Controller) GetEmployeeList(date *api.Date, resp api.Employees_GetEmploy
         log.Error(err)
         return err
     }
-    for _, e := range elist {
-        err = resp.Send(&api.Employee{Id: e.ID, Date: e.Date.String(), Name: e.Name, Position: e.Position, Grade: e.Grade, TuMembership: e.TUMembership})
-        if err != nil {
-            err = errors.Wrap(err, "Error sending employee")
-            log.Error(err)
-            return err
-        }
+
+    err = sendEmployees(elist, resp.Send)
+    if err != nil {
+        return err
     }
 
     return nil
@@ -102,28 +145,25 @@ func (c Controller) GetEmployee(ctx context.Context, id *api.ID) (*api.Employee,
         return nil, err
     }
 
-    return &api.Employee{Id: e.ID, Date: e.Date.String(), Name: e.Name, Position: e.Position, Grade: e.Grade, TuMembership: e.TUMembership}, nil
+    return employeeToMessage(e), nil
 }
 
 func (c Controller) GetEmployeePayments(rq *api.IDTime, resp api.Employees_GetEmployeePaymentsServer) error {
-    d, err := unmarshalDate(rq.GetDate())
+    d, err := unmarshalDate(rq.Date.GetDate())
     if err != nil {
         return err
     }
 
-    elist, err := c.Usecases.GetEmployeePayments(resp.Context(), rq.GetId(), d)
+    elist, err := c.Usecases.GetEmployeePayments(resp.Context(), rq.Id.GetId(), d)
     if err != nil {
         err = errors.Wrap(err, "Error getting employee list")
         log.Error(err)
         return err
     }
-    for _, e := range elist {
-        err = resp.Send(&api.Employee{Id: e.ID, Date: e.Date.String(), Name: e.Name, Position: e.Position, Grade: e.Grade, TuMembership: e.TUMembership})
-        if err != nil {
-            err = errors.Wrap(err, "Error sending employee")
-            log.Error(err)
-            return err
-        }
+
+    err = sendEmployees(elist, resp.Send)
+    if err != nil {
+        return err
     }
 
     return nil

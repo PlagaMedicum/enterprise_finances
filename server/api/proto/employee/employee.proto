@@ -25,15 +25,15 @@ message Employee {
     double deduction = 9;
 }
 
+message IDTime {
+    ID id = 1;
+    Date date = 2;
+}
+
 message ID {
     uint64 id = 1;
 }
 
 message Date {
     string date = 1;
-}
-
-message IDTime {
-    uint64 id = 1;
-    string date = 2;
 }

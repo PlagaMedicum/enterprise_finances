@@ -8,6 +8,7 @@ import (
     "github.com/golang/protobuf/ptypes/empty"
     "github.com/pkg/errors"
     log "github.com/sirupsen/logrus"
+    "sync"
     "time"
 )
 
@@ -27,13 +28,58 @@ func unmarshalDate(d string) (time.Time, error) {
     return res, nil
 }
 
-func (c Controller) AddInfo(ctx context.Context, g *api.Grade) (*empty.Empty, error) {
+func messageToGrade(g *api.Grade) (domain.Grade, error) {
     d, err := unmarshalDate(g.GetDate())
+    if err != nil {
+        return domain.Grade{}, err
+    }
+
+    return domain.Grade{ID: g.GetId(), Num: g.GetNum(), Date: d, Coefficient: int(g.GetCoeff())}, nil
+}
+
+func gradeToMessage(g domain.Grade) *api.Grade {
+    return &api.Grade{Id: g.ID, Num: g.Num, Date: g.Date.String(), Coeff: int32(g.Coefficient)}
+}
+
+func sendGrades(glist []domain.Grade, send func(*api.Grade) error) error {
+    errc := make(chan error)
+    waitc := make(chan struct{})
+    wg := sync.WaitGroup{}
+    for _, g := range glist {
+        wg.Add(1)
+        go func(g domain.Grade) {
+            err := send(gradeToMessage(g))
+            if err != nil {
+                err = errors.Wrap(err, "Error sending grade")
+                log.Error(err)
+                errc <- err
+                return
+            }
+            wg.Done()
+        }(g)
+    }
+
+    go func() {
+        wg.Wait()
+        close(waitc)
+    }()
+
+    select {
+    case err := <-errc:
+        return err
+    case <-waitc:
+    }
+
+    return nil
+}
+
+func (c Controller) AddInfo(ctx context.Context, rq *api.Grade) (*empty.Empty, error) {
+    g, err := messageToGrade(rq)
     if err != nil {
         return nil, err
     }
 
-    err = c.Usecases.AddInfo(ctx, domain.Grade{ID: g.GetId(), Num: g.GetNum(), Date: d, Coefficient: int(g.GetCoeff())})
+    err = c.Usecases.AddInfo(ctx, g)
     if err != nil {
         err = errors.Wrap(err, "Error adding info")
         log.Error(err)
@@ -43,13 +89,13 @@ func (c Controller) AddInfo(ctx context.Context, g *api.Grade) (*empty.Empty, er
     return nil, nil
 }
 
-func (c Controller) EditInfo(ctx context.Context, g *api.Grade) (*empty.Empty, error) {
-    d, err := unmarshalDate(g.GetDate())
+func (c Controller) EditInfo(ctx context.Context, rq *api.Grade) (*empty.Empty, error) {
+    g, err := messageToGrade(rq)
     if err != nil {
         return nil, err
     }
 
-    err = c.Usecases.EditInfo(ctx, domain.Grade{ID: g.GetId(), Num: g.GetNum(), Date: d, Coefficient: int(g.GetCoeff())})
+    err = c.Usecases.EditInfo(ctx, g)
     if err != nil {
         err = errors.Wrap(err, "Error editing info")
         log.Error(err)
@@ -82,13 +128,10 @@ func (c Controller) GetGradeList(date *api.Date, resp api.Grades_GetGradeListSer
         log.Error(err)
         return err
     }
-    for _, g := range glist {
-        err = resp.Send(&api.Grade{Id: g.ID, Num: g.Num, Date: g.Date.String(), Coeff: int32(g.Coefficient)})
-        if err != nil {
-            err = errors.Wrap(err, "Error sending grade")
-            log.Error(err)
-            return err
-        }
+
+    err = sendGrades(glist, resp.Send)
+    if err != nil {
+        return err
     }
 
     return nil
@@ -102,5 +145,5 @@ func (c Controller) GetGrade(ctx context.Context, id *api.ID) (*api.Grade, error
         return nil, err
     }
 
-    return &api.Grade{Id: g.ID, Num: g.Num, Date: g.Date.String(), Coeff: int32(g.Coefficient)}, nil
+    return gradeToMessage(g), nil
 }
