@@ -8,7 +8,7 @@ type Employee struct {
 	Name         string    `json:"name"`
 	Position     string    `json:"position"`
 	Grade        uint64    `json:"grade"`
-	TUMembership bool      `json:"tu-membership" db:"tu_membership"` // true if employee is trade union member
+	TUMembership bool      `json:"tu-membership" db:"tu_membership" bson:"tu_membership"` // true if employee is trade union member
 	Salary       float64   `json:"salary"`
 	Accruals     float64   `json:"accruals"`
 	Deduction    float64   `json:"deduction"`

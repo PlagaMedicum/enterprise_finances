@@ -1,10 +1,10 @@
 package main
 
 import (
-    psql "github.com/PlagaMedicum/enterprise_finances/server/pkg/database/postgresql"
+    "github.com/PlagaMedicum/enterprise_finances/server/pkg/database/mongodb"
     "github.com/PlagaMedicum/enterprise_finances/server/pkg/grade/api"
     handler "github.com/PlagaMedicum/enterprise_finances/server/pkg/grade/handlers/grpc"
-    "github.com/PlagaMedicum/enterprise_finances/server/pkg/grade/repositories/postgresql"
+    repository "github.com/PlagaMedicum/enterprise_finances/server/pkg/grade/repositories/mongodb"
     "github.com/PlagaMedicum/enterprise_finances/server/pkg/grade/usecases"
     log "github.com/sirupsen/logrus"
     "google.golang.org/grpc"
@@ -12,20 +12,18 @@ import (
 )
 
 func main() {
-    db := psql.DB{
-        User:         "postgres",
-        Password:     "postgres",
+    db := mongodb.DB{
         Host:         "localhost",
-        Port:         5432,
+        Port:         "27017",
         DatabaseName: "efinances",
-        SSLMode:      "disable",
     }
-    db.Connect()
-    db.MigrateDown()
-    db.MigrateUp()
+    err := db.Connect()
+    if err != nil {
+        log.Fatal(err)
+    }
 
     s := grpc.NewServer()
-    api.RegisterGradesServer(s, &handler.Controller{usecases.Controller{postgresql.Controller{db}}})
+    api.RegisterGradesServer(s, &handler.Controller{usecases.Controller{repository.Controller{db}}})
 
     l, err := net.Listen("tcp", ":9000")
     if err != nil {

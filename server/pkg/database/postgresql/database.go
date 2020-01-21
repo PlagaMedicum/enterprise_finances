@@ -28,7 +28,7 @@ type DB struct {
 
 // Connect ...
 func (db *DB) Connect() {
-	log.Info("Connecting to PostgreSQL DB.")
+	log.Info("Connecting to PostgreSQL DB...")
 
 	var err error
 	db.DB, err = sqlx.Connect("postgres",

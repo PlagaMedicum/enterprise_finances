@@ -76,33 +76,33 @@ func sendGrades(glist []domain.Grade, send func(*api.Grade) error) error {
 func (c Controller) AddInfo(ctx context.Context, rq *api.Grade) (*empty.Empty, error) {
     g, err := messageToGrade(rq)
     if err != nil {
-        return nil, err
+        return &empty.Empty{}, err
     }
 
     err = c.Usecases.AddInfo(ctx, g)
     if err != nil {
         err = errors.Wrap(err, "Error adding info")
         log.Error(err)
-        return nil, err
+        return &empty.Empty{}, err
     }
 
-    return nil, nil
+    return &empty.Empty{}, nil
 }
 
 func (c Controller) EditInfo(ctx context.Context, rq *api.Grade) (*empty.Empty, error) {
     g, err := messageToGrade(rq)
     if err != nil {
-        return nil, err
+        return &empty.Empty{}, err
     }
 
     err = c.Usecases.EditInfo(ctx, g)
     if err != nil {
         err = errors.Wrap(err, "Error editing info")
         log.Error(err)
-        return nil, err
+        return &empty.Empty{}, err
     }
 
-    return nil, nil
+    return &empty.Empty{}, nil
 }
 
 func (c Controller) DeleteInfo(ctx context.Context, id *api.ID) (*empty.Empty, error) {
@@ -110,10 +110,10 @@ func (c Controller) DeleteInfo(ctx context.Context, id *api.ID) (*empty.Empty, e
     if err != nil {
         err = errors.Wrap(err, "Error deleting info")
         log.Error(err)
-        return nil, err
+        return &empty.Empty{}, err
     }
 
-    return nil, nil
+    return &empty.Empty{}, nil
 }
 
 func (c Controller) GetGradeList(date *api.Date, resp api.Grades_GetGradeListServer) error {
@@ -142,7 +142,7 @@ func (c Controller) GetGrade(ctx context.Context, id *api.ID) (*api.Grade, error
     if err != nil {
         err = errors.Wrap(err, "Error getting grade list")
         log.Error(err)
-        return nil, err
+        return &api.Grade{}, err
     }
 
     return gradeToMessage(g), nil

@@ -76,14 +76,14 @@ func sendEmployees(elist []domain.Employee, send func(*api.Employee) error) erro
 func (c Controller) AddEmployee(ctx context.Context, rq *api.Employee) (*api.ID, error) {
     e, err := messageToEmployee(rq)
     if err != nil {
-        return nil, err
+        return &api.ID{}, err
     }
 
     id, err := c.Usecases.AddEmployee(ctx, e)
     if err != nil {
         err = errors.Wrap(err, "Error adding employee")
         log.Error(err)
-        return nil, err
+        return &api.ID{}, err
     }
 
     return &api.ID{Id: id}, nil
@@ -92,17 +92,17 @@ func (c Controller) AddEmployee(ctx context.Context, rq *api.Employee) (*api.ID,
 func (c Controller) EditEmployee(ctx context.Context, rq *api.Employee) (*empty.Empty, error) {
     e, err := messageToEmployee(rq)
     if err != nil {
-        return nil, err
+        return &empty.Empty{}, err
     }
 
     err = c.Usecases.EditEmployee(ctx, e)
     if err != nil {
         err = errors.Wrap(err, "Error editing employee")
         log.Error(err)
-        return nil, err
+        return &empty.Empty{}, err
     }
 
-    return nil, nil
+    return &empty.Empty{}, nil
 }
 
 func (c Controller) DeleteEmployee(ctx context.Context, id *api.ID) (*empty.Empty, error) {
@@ -110,10 +110,10 @@ func (c Controller) DeleteEmployee(ctx context.Context, id *api.ID) (*empty.Empt
     if err != nil {
         err = errors.Wrap(err, "Error deleting employee")
         log.Error(err)
-        return nil, err
+        return &empty.Empty{}, err
     }
 
-    return nil, nil
+    return &empty.Empty{}, nil
 }
 
 func (c Controller) GetEmployeeList(date *api.Date, resp api.Employees_GetEmployeeListServer) error {
@@ -142,7 +142,7 @@ func (c Controller) GetEmployee(ctx context.Context, id *api.ID) (*api.Employee,
     if err != nil {
         err = errors.Wrap(err, "Error getting employee")
         log.Error(err)
-        return nil, err
+        return &api.Employee{}, err
     }
 
     return employeeToMessage(e), nil

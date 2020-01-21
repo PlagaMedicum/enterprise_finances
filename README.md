@@ -7,8 +7,11 @@
 
 #### Backend
 1. Go
-2. PostgreSQL
+2. PostgreSQL and MongoDB
 3. Have both REST api and gRPC implementations.
+
+**Note:**
+For this project i put almost all business logic into repositories to have more practice with db queries.
 
 ## Вариант 12. «Расчет заработной платы»
 #### Государственное предприятие, имеющее в своей структуре ряд иерархически подчиняющихся подразделений.
